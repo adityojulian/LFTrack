@@ -1,6 +1,4 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:ordinary/controller/scan_controller.dart';
 
@@ -10,15 +8,20 @@ class CameraView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Scan Page"),
+      ),
       body: GetBuilder<ScanController>(
           init: ScanController(),
           builder: (controller) {
             return controller.isCameraIntialized.value
                 ? SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height - 100,
+                    height: MediaQuery.of(context).size.height -
+                        AppBar().preferredSize.height,
                     child: Stack(
                       children: [
+                        // CameraPreview(controller.cameraController)
                         controller.cameraController.buildPreview(),
                         // Positioned(
                         //   top: 700,
@@ -45,6 +48,17 @@ class CameraView extends StatelessWidget {
                   )
                 : const Center(child: Text("Loading Preview"));
           }),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: Container(
+          height: 50,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.camera),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

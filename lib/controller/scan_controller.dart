@@ -17,8 +17,8 @@ class ScanController extends GetxController {
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     cameraController.dispose();
+    super.dispose();
   }
 
   late CameraController cameraController;
@@ -41,7 +41,7 @@ class ScanController extends GetxController {
       await cameraController.initialize().then((value) {
         cameraController.startImageStream((image) {
           cameraCount++;
-          if (cameraCount % 10 == 0) {
+          if (cameraCount % 30 == 0) {
             cameraCount = 0;
             objectDetector(image);
           }

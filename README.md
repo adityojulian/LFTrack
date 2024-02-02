@@ -4,8 +4,6 @@ Very much extra super ordinary mobile application
 
 ## Low Fidelity Mockup
 
----
-
 ![Low Fidelity Mockup](./assets/ordinary.jpg)
 Low-fidelity prototype image as a sequence of screens for the mobile application, detailing the user journey through various steps of the app's functionality. Here's a description of each screen:
 
