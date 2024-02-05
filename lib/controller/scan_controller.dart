@@ -57,26 +57,27 @@ class ScanController extends GetxController {
 
   initTFLite() async {
     await Tflite.loadModel(
-        model: "assets/model.tflite",
-        labels: "assets/labels.txt",
+        model: "assets/yolov2_tiny.tflite",
+        labels: "assets/yolov2_tiny.txt",
         isAsset: true,
         numThreads: 1,
         useGpuDelegate: false);
   }
 
   objectDetector(CameraImage image) async {
-    var detector = await Tflite.runModelOnFrame(
-        bytesList: image.planes.map((e) {
-          return e.bytes;
+    var detector = await Tflite.detectObjectOnFrame(
+        bytesList: image.planes.map((plane) {
+          return plane.bytes;
         }).toList(),
+        model: "YOLO",
         asynch: true,
         imageHeight: image.height,
         imageWidth: image.width,
         imageMean: 127.5,
         imageStd: 127.5,
-        numResults: 1,
         rotation: 90,
-        threshold: 0.4);
+        threshold: 0.1,
+        numResultsPerClass: 1);
     if (detector != null) {
       log("Result is ${detector}");
       // var detectedObj = detector.first;

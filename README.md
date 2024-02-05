@@ -4,7 +4,7 @@
 
 ## Project Description
 
-This [Flutter](https://flutter.dev/)-based cross-platforms mobile application is designed to streamlined the way Lateral Flow Tests (LFTs) are processed and managed by forcing as minimum user interaction as possible while maintaining user-friendly interface and intuitiveness. The app, through integrated light model ([TFLite](https://www.tensorflow.org/lite)) and data management technologies, enables users to scan LFTs using their smartphone cameras, automatically interpret the results, and seamlessly store these results in a secure database.
+This [Flutter](https://flutter.dev/)-based cross-platforms mobile application is designed to streamline the way Lateral Flow Tests (LFTs) are processed and managed by forcing as minimum user interaction as possible while maintaining user-friendly interface and intuitiveness. The app, through integrated light model ([TFLite](https://www.tensorflow.org/lite)) and data management technologies, enables users to scan LFTs using their smartphone cameras, automatically interpret the results, and seamlessly store these results in a secure database.
 
 From the moment the LFT is positioned within the camera's frame, the app initiates a countdown, performs the scan, interprets the result, and stores it—all without unnecessary steps or inputs from the user.
 
@@ -62,7 +62,9 @@ Tools • Dart 3.2.6 • DevTools 2.28.5
 ### Android Emulator
 
 :white_check_mark: Google Pixel 6a
+
 :white_check_mark: API Version 34
+
 :white_check_mark: Harware Acceleration: **On**
 
 ## Use this README File
