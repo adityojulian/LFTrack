@@ -1,6 +1,24 @@
-# Ordinary App
+# LFTrack
 
-Very much extra super ordinary mobile application
+> _:dash: Instant, Accurate, and Secure LFT Results at Your Fingertips_
+
+## Project Description
+
+This [Flutter](https://flutter.dev/)-based cross-platforms mobile application is designed to streamlined the way Lateral Flow Tests (LFTs) are processed and managed by forcing as minimum user interaction as possible while maintaining user-friendly interface and intuitiveness. The app, through integrated light model ([TFLite](https://www.tensorflow.org/lite)) and data management technologies, enables users to scan LFTs using their smartphone cameras, automatically interpret the results, and seamlessly store these results in a secure database.
+
+From the moment the LFT is positioned within the camera's frame, the app initiates a countdown, performs the scan, interprets the result, and stores it—all without unnecessary steps or inputs from the user.
+
+## Key-Features
+
+**:star2: Automatic Detection and Scanning:** Utilizes the smartphone camera to detect LFTs and automatically starts the scanning process.
+**:zap: Instant Result Interpretation:** Employs integrated light-weight TFLite model to interpret test results accurately within seconds.
+**:fire: Direct Database Integration:** Automatically uploads results to a secure [Firebase](https://firebase.google.com/) database, ensuring data integrity and privacy.
+**:iphone: User-friendly Interface:** Designed for ease of use, requiring minimal interaction from the user to complete the scanning process.
+
+## User Persona
+
+This user persona is designed using [Xtensio](https://xtensio.com/).
+![User Persona](./assets/OrdinaryUserPersona.png)
 
 ## Low Fidelity Mockup
 
@@ -23,6 +41,22 @@ Low-fidelity prototype image as a sequence of screens for the mobile application
 14. **History (Date)**: This screen allow the user to select a date and view the history of scans for that particular day.
 15. **History (All Scans)**: Displays all scan results with the option to "Export" the data. The scans are labeled with outcomes like "Positive," "Negative," or "Invalid."
 16. **Export Options**: A screen dedicated to exporting data, with filters for date range and result type, along with a toggle for including invalid results.
+
+## Development Environment
+
+```
+$ flutter --version
+Flutter 3.16.9 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 41456452f2 (10 days ago) • 2024-01-25 10:06:23 -0800
+Engine • revision f40e976bed
+Tools • Dart 3.2.6 • DevTools 2.28.5
+```
+
+### Android Emulator
+
+:white_check_mark: Google Pixel 6a
+:white_check_mark: API Version 34
+:white_check_mark: Harware Acceleration: **On**
 
 ## Use this README File
 
