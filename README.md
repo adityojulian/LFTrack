@@ -11,19 +11,26 @@ From the moment the LFT is positioned within the camera's frame, the app initiat
 ## Key-Features
 
 **:star2: Automatic Detection and Scanning:** Utilizes the smartphone camera to detect LFTs and automatically starts the scanning process.
+
 **:zap: Instant Result Interpretation:** Employs integrated light-weight TFLite model to interpret test results accurately within seconds.
+
 **:fire: Direct Database Integration:** Automatically uploads results to a secure [Firebase](https://firebase.google.com/) database, ensuring data integrity and privacy.
+
 **:iphone: User-friendly Interface:** Designed for ease of use, requiring minimal interaction from the user to complete the scanning process.
 
 ## User Persona
 
 This user persona is designed using [Xtensio](https://xtensio.com/).
+
 ![User Persona](./assets/OrdinaryUserPersona.png)
 
 ## Low Fidelity Mockup
 
+Low-fidelity prototype image as a sequence of screens for the mobile application, detailing the user journey through various steps of the app's functionality.
+
 ![Low Fidelity Mockup](./assets/ordinary.jpg)
-Low-fidelity prototype image as a sequence of screens for the mobile application, detailing the user journey through various steps of the app's functionality. Here's a description of each screen:
+
+Here's a description of each screen:
 
 1.  **Splash Screen**: A simple screen with a logo in the center, serving as the initial loading screen for the app.
 2.  **On-boarding #1**: Instructions for the user to place a lateral flow test (LFT) on a flat surface, with a "Next" button.
