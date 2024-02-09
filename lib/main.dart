@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ordinary/app/shared/theme.dart';
 // import 'package:ordinary/global_bindings.dart';
 // import 'package:ordinary/views/camera_screen.dart';
 // import 'package:ordinary/views/camera_view.dart';
@@ -18,6 +19,15 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'LFTrack',
+      theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: ColorSeed.green.color,
+          brightness: Brightness.light),
+      darkTheme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: ColorSeed.green.color,
+          brightness: Brightness.dark),
+      themeMode: ThemeMode.system,
       initialRoute: Routes.SPLASH_SCREEN,
       getPages: AppPages.routes,
     );

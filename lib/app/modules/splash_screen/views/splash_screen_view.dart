@@ -9,12 +9,28 @@ class SplashScreenView extends GetView<SplashScreenController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      // appBar: AppBar(
+      //   actions: [
+      //     Switch(
+      //       // value: controller.currentTheme.value == ThemeMode.dark,
+      //       value: Get.isDarkMode,
+      //       onChanged: (value) {
+      //         // controller.switchTheme();
+      //         // Get.changeThemeMode(controller.currentTheme.value);
+      //         Get.changeThemeMode(
+      //           Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: Stack(children: [
         Container(
           margin: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
-              color: Colors.white10, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
+              shape: BoxShape.circle),
         ),
         Center(
           child: Container(
