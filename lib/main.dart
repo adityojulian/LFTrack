@@ -21,11 +21,11 @@ class MyApp extends StatelessWidget {
       title: 'LFTrack',
       theme: ThemeData(
           useMaterial3: true,
-          colorSchemeSeed: ColorSeed.green.color,
+          colorSchemeSeed: ColorSeed.baseColor.color,
           brightness: Brightness.light),
       darkTheme: ThemeData(
           useMaterial3: true,
-          colorSchemeSeed: ColorSeed.green.color,
+          colorSchemeSeed: ColorSeed.baseColor.color,
           brightness: Brightness.dark),
       themeMode: ThemeMode.system,
       initialRoute: Routes.SPLASH_SCREEN,
