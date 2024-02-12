@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/detector_widget/bindings/detector_widget_binding.dart';
+import '../modules/detector_widget/views/detector_widget_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -29,6 +31,11 @@ class AppPages {
       name: _Paths.ONBOARDING,
       page: () => const OnboardingView(),
       binding: OnboardingBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETECTOR_WIDGET,
+      page: () => const DetectorWidget(),
+      binding: DetectorWidgetBinding(),
     ),
   ];
 }

@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
           colorSchemeSeed: ColorSeed.baseColor.color,
           brightness: Brightness.dark),
       themeMode: ThemeMode.system,
-      initialRoute: Routes.SPLASH_SCREEN,
+      initialRoute: Routes.HOME,
       getPages: AppPages.routes,
     );
   }

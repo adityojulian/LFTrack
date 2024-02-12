@@ -37,10 +37,15 @@ dependencies:
   permission_handler: ^11.0.1
   camera: ^0.10.5+2
   get: ^4.6.6
-  flutter_tflite: ^1.0.1
-  image: 3.3.0
+  # flutter_tflite: ^1.0.1
+  # image: 3.3.0
   google_fonts: ^6.1.0
   smooth_page_indicator: ^1.1.0
+  tflite_flutter: ^0.10.4
+  image: ^4.0.17
+  path_provider: ^2.0.15
+  image_picker: ^1.0.0
+  exif: ^3.1.4
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +72,7 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - assets/models/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
