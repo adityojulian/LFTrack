@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorSchemeSeed: ColorSeed.baseColor.color,
           brightness: Brightness.dark),
-      themeMode: ThemeMode.system,
-      initialRoute: Routes.HOME,
+      themeMode: ThemeMode.light,
+      initialRoute: Routes.BOTTOM_NAV_BAR,
       getPages: AppPages.routes,
     );
   }

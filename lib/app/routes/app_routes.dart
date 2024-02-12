@@ -7,6 +7,9 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const ONBOARDING = _Paths.ONBOARDING;
   static const DETECTOR_WIDGET = _Paths.DETECTOR_WIDGET;
+  static const HISTORY = _Paths.HISTORY;
+  static const PLACEHOLDER = _Paths.PLACEHOLDER;
+  static const BOTTOM_NAV_BAR = _Paths.BOTTOM_NAV_BAR;
 }
 
 abstract class _Paths {
@@ -15,4 +18,7 @@ abstract class _Paths {
   static const HOME = '/home';
   static const ONBOARDING = '/onboarding';
   static const DETECTOR_WIDGET = '/detector-widget';
+  static const HISTORY = '/history';
+  static const PLACEHOLDER = '/placeholder';
+  static const BOTTOM_NAV_BAR = '/bottom-nav-bar';
 }

@@ -14,8 +14,10 @@ import 'package:ordinary/app/modules/detector_widget/views/stats_widget.dart';
 
 /// [DetectorWidget] sends each frame for inference
 class DetectorWidget extends StatefulWidget {
+  final double bottomPadding;
+
   /// Constructor
-  const DetectorWidget({super.key});
+  const DetectorWidget({super.key, required this.bottomPadding});
 
   @override
   State<DetectorWidget> createState() => _DetectorWidgetState();
@@ -25,6 +27,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
     with WidgetsBindingObserver {
   /// List of available cameras
   late List<CameraDescription> cameras;
+  late CameraDescription cameraDescription;
 
   /// Controller
   CameraController? _cameraController;
@@ -71,9 +74,13 @@ class _DetectorWidgetState extends State<DetectorWidget>
   /// Initializes the camera by setting [_cameraController]
   void _initializeCamera() async {
     cameras = await availableCameras();
+    cameraDescription = cameras.firstWhere(
+        (element) => element.lensDirection == CameraLensDirection.back);
+
     // cameras[0] for back-camera
     _cameraController = CameraController(
-      cameras[0],
+      cameras[1],
+      // cameraDescription,
       ResolutionPreset.medium,
       enableAudio: false,
     )..initialize().then((_) async {
@@ -94,20 +101,39 @@ class _DetectorWidgetState extends State<DetectorWidget>
       return const SizedBox.shrink();
     }
 
-    var aspect = 1 / _controller.value.aspectRatio;
+    // var aspect = 1 /
+    //     (_controller.value.aspectRatio *
+    //         MediaQuery.of(context).size.aspectRatio);
+    // var aspect = 1 / (_controller.value.aspectRatio);
+    final mediaSize = MediaQuery.of(context).size;
+    // final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final scale = 1 /
+        (_controller.value.aspectRatio *
+            (mediaSize.width /
+                (mediaSize.height - AppBar().preferredSize.height)));
 
     return Stack(
       children: [
-        AspectRatio(
-          aspectRatio: aspect,
-          child: CameraPreview(_controller),
+        // AspectRatio(
+        //   aspectRatio: aspect,
+        //   child: CameraPreview(_controller),
+        // ),
+        ClipRect(
+          clipper: _MediaSizeClipper(mediaSize),
+          child: Transform.scale(
+              scale: scale,
+              alignment: Alignment.topCenter,
+              child: CameraPreview(_controller)),
         ),
         // Stats
-        _statsWidget(),
+        // _statsWidget(),
         // Bounding boxes
-        AspectRatio(
-          aspectRatio: aspect,
-          child: _boundingBoxes(),
+        ClipRect(
+          clipper: _MediaSizeClipper(mediaSize),
+          child: Transform.scale(
+              scale: scale,
+              alignment: Alignment.topCenter,
+              child: _boundingBoxes()),
         ),
       ],
     );
@@ -167,5 +193,20 @@ class _DetectorWidgetState extends State<DetectorWidget>
     _detector?.stop();
     _subscription?.cancel();
     super.dispose();
+  }
+}
+
+class _MediaSizeClipper extends CustomClipper<Rect> {
+  final Size mediaSize;
+  const _MediaSizeClipper(this.mediaSize);
+
+  @override
+  Rect getClip(Size size) {
+    return Rect.fromLTWH(0, 0, mediaSize.width, mediaSize.height);
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) {
+    return true;
   }
 }
