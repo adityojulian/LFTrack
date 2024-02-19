@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
 
 // import 'package:get/get.dart';
 // import '../controllers/detector_widget_controller.dart';
@@ -10,6 +12,7 @@ import 'package:ordinary/app/models/recognition.dart';
 import 'package:ordinary/app/models/screen_params.dart';
 import 'package:ordinary/app/modules/detector_widget/service/detector_service.dart';
 import 'package:ordinary/app/modules/detector_widget/views/box_widget.dart';
+import 'package:ordinary/app/modules/detector_widget/views/camera_frame.dart';
 import 'package:ordinary/app/modules/detector_widget/views/stats_widget.dart';
 
 /// [DetectorWidget] sends each frame for inference
@@ -127,6 +130,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
         ),
         // Stats
         // _statsWidget(),
+        _cameraFrame(),
         // Bounding boxes
         ClipRect(
           clipper: _MediaSizeClipper(mediaSize),
@@ -136,6 +140,35 @@ class _DetectorWidgetState extends State<DetectorWidget>
               child: _boundingBoxes()),
         ),
       ],
+    );
+  }
+
+  var lastResult = [];
+
+  Widget _cameraFrame() {
+    Color frameColor = Colors.red; // Default color
+    final frameSize = Size(300, 500); // Adjust the size as per your requirement
+    final screenSize = MediaQuery.of(context).size;
+
+    // Check if any recognition is fully within the frame
+    if (results != null) {
+      for (var result in results!) {
+        if (isFullyWithinFrame(result, frameSize, screenSize)) {
+          log("IN FRAME");
+          frameColor = Colors.green; // Change color if fully within the frame
+          break; // Exit loop after the first match
+        } else {
+          log("NOT IN FRAME");
+        }
+      }
+    }
+
+    // Draw the camera frame with the determined color
+    return Center(
+      child: CustomPaint(
+        size: frameSize,
+        painter: CameraFramePainter(frameColor),
+      ),
     );
   }
 
@@ -169,6 +202,24 @@ class _DetectorWidgetState extends State<DetectorWidget>
   /// Callback to receive each frame [CameraImage] perform inference on it
   void onLatestImageAvailable(CameraImage cameraImage) async {
     _detector?.processFrame(cameraImage);
+  }
+
+  bool isFullyWithinFrame(
+      Recognition recognition, Size frameSize, Size screenSize) {
+    // Frame boundaries
+    final frameRect = Rect.fromCenter(
+        center: Offset(screenSize.width / 2, screenSize.height / 2),
+        width: frameSize.width,
+        height: frameSize.height);
+
+    // Recognition boundaries (assuming `recognition.renderLocation` is a Rect)
+    final recognitionRect = recognition.renderLocation;
+
+    // Check if recognition is fully within the frame
+    return frameRect
+            .contains(Offset(recognitionRect.left, recognitionRect.top)) &&
+        frameRect
+            .contains(Offset(recognitionRect.right, recognitionRect.bottom));
   }
 
   @override
