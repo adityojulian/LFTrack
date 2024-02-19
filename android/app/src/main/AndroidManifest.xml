@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ordinary">
+    package="com.lftrack">
     <uses-permission android:name="android.permission.CAMERA"/>
    <application
-        android:label="ordinary"
+        android:label="LFTrack"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

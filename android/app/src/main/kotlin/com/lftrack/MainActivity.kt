@@ -1,4 +1,4 @@
-package com.example.ordinary
+package com.lftrack
 
 import io.flutter.embedding.android.FlutterActivity
 

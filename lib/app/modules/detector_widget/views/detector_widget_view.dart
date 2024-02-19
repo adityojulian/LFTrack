@@ -79,7 +79,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
     // cameras[0] for back-camera
     _cameraController = CameraController(
-      cameras[1],
+      cameras[0],
       // cameraDescription,
       ResolutionPreset.medium,
       enableAudio: false,
