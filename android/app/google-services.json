@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "74390642713",
+    "project_id": "lftrack-app",
+    "storage_bucket": "lftrack-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74390642713:android:e7f4a19dfac1ef6f500a88",
+        "android_client_info": {
+          "package_name": "com.lftrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdc7jgN0KkhnqTCdieJCBfjsG4PMECzU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

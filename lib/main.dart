@@ -5,6 +5,8 @@ import 'package:ordinary/app/shared/theme.dart';
 // import 'package:ordinary/views/camera_screen.dart';
 // import 'package:ordinary/views/camera_view.dart';
 import 'app/routes/app_pages.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() {
   runApp(const MyApp());
