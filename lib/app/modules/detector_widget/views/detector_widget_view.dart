@@ -130,13 +130,6 @@ class _DetectorWidgetState extends State<DetectorWidget>
         ),
         // Stats
         // _statsWidget(),
-        // ClipRect(
-        //   clipper: _MediaSizeClipper(mediaSize),
-        //   child: Transform.scale(
-        //       scale: scale,
-        //       alignment: Alignment.topCenter,
-        //       child: _cameraFrame()),
-        // ),
         _cameraFrame(),
         // Bounding boxes
         ClipRect(
@@ -155,6 +148,9 @@ class _DetectorWidgetState extends State<DetectorWidget>
   Widget _cameraFrame() {
     Color frameColor = Colors.red; // Default color
     const frameSize = Size(250, 500); // Adjust the size as per your requirement
+    // final screenWidth = ScreenParams.screenPreviewSize.width;
+    // final screenHeight = ScreenParams.screenPreviewSize.height;
+
     // final screenSize = MediaQuery.of(context).size;
 
     // Check if any recognition is fully within the frame
@@ -178,6 +174,13 @@ class _DetectorWidgetState extends State<DetectorWidget>
         painter: CameraFramePainter(frameColor),
       ),
     );
+    // return Center(
+    //   child: FocusFrameOverlay(
+    //       frameRect: Rect.fromCenter(
+    //           center: Offset(screenWidth / 2, screenHeight / 2),
+    //           width: frameSize.width,
+    //           height: frameSize.height)),
+    // );
   }
 
   Widget _statsWidget() => (stats != null)
