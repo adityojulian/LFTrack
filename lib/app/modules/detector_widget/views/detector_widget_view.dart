@@ -130,6 +130,13 @@ class _DetectorWidgetState extends State<DetectorWidget>
         ),
         // Stats
         // _statsWidget(),
+        // ClipRect(
+        //   clipper: _MediaSizeClipper(mediaSize),
+        //   child: Transform.scale(
+        //       scale: scale,
+        //       alignment: Alignment.topCenter,
+        //       child: _cameraFrame()),
+        // ),
         _cameraFrame(),
         // Bounding boxes
         ClipRect(
@@ -147,13 +154,14 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
   Widget _cameraFrame() {
     Color frameColor = Colors.red; // Default color
-    final frameSize = Size(300, 500); // Adjust the size as per your requirement
-    final screenSize = MediaQuery.of(context).size;
+    const frameSize = Size(250, 500); // Adjust the size as per your requirement
+    // final screenSize = MediaQuery.of(context).size;
 
     // Check if any recognition is fully within the frame
     if (results != null) {
       for (var result in results!) {
-        if (isFullyWithinFrame(result, frameSize, screenSize)) {
+        if (isFullyWithinFrame(
+            result, frameSize, ScreenParams.screenPreviewSize)) {
           log("IN FRAME");
           frameColor = Colors.green; // Change color if fully within the frame
           break; // Exit loop after the first match
@@ -215,11 +223,16 @@ class _DetectorWidgetState extends State<DetectorWidget>
     // Recognition boundaries (assuming `recognition.renderLocation` is a Rect)
     final recognitionRect = recognition.renderLocation;
 
+    // log("DETECTION L:${recognitionRect.left.toString()}, T:${recognitionRect.top.toString()}");
+    log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
+    // log("FRAME L:${frameRect.left.toString()}, T:${frameRect.top.toString()}");
+    log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
+
     // Check if recognition is fully within the frame
-    return frameRect
-            .contains(Offset(recognitionRect.left, recognitionRect.top)) &&
-        frameRect
-            .contains(Offset(recognitionRect.right, recognitionRect.bottom));
+    return recognitionRect.left >= frameRect.left &&
+        recognitionRect.top >= frameRect.top &&
+        recognitionRect.right <= (frameRect.right + 10) &&
+        recognitionRect.bottom <= frameRect.bottom;
   }
 
   @override
