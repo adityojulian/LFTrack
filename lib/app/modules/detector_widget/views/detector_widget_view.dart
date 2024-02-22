@@ -4,10 +4,9 @@ import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-
-// import 'package:get/get.dart';
-// import '../controllers/detector_widget_controller.dart';
+import 'package:get/get.dart';
+import 'package:ordinary/app/shared/theme.dart';
+import '../controllers/detector_widget_controller.dart';
 import 'package:ordinary/app/models/recognition.dart';
 import 'package:ordinary/app/models/screen_params.dart';
 import 'package:ordinary/app/modules/detector_widget/service/detector_service.dart';
@@ -49,6 +48,10 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
   /// Realtime stats
   Map<String, String>? stats;
+
+  // Countdown
+  // Timer? _countdownTimer;
+  // int _countdownSeconds = 5;
 
   @override
   void initState() {
@@ -97,8 +100,47 @@ class _DetectorWidgetState extends State<DetectorWidget>
       });
   }
 
+  // Countdown
+  // void _startCountdown() {
+  //   _countdownTimer?.cancel(); // Cancel any existing timer
+  //   _countdownSeconds = 3; // Reset countdown
+  //   _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     if (!isFullyWithinFrame(
+  //         results!.first, Size(250, 500), ScreenParams.screenPreviewSize)) {
+  //       _resetCountdown();
+  //       // _countdownSeconds = 3;
+  //     } else if (_countdownSeconds > 0) {
+  //       log("Function is being executed during countdown.");
+  //       setState(() {
+  //         _countdownSeconds--;
+  //       });
+  //     } else {
+  //       log("Function is being executed after countdown.");
+  //       _resetCountdown();
+  //       saveResultToFirebase(); // Save result when countdown finishes
+  //     }
+  //   });
+  // }
+
+  // void _resetCountdown() {
+  //   setState(() {
+  //     _countdownTimer?.cancel();
+  //     _countdownSeconds = 3; // Reset to initial value
+  //   });
+  // }
+
+  void saveResultToFirebase() {
+    // Implement your Firebase save operation here
+    log("Saving result to Firebase...");
+    // Example: FirebaseFirestore.instance.collection('results').add({...});
+  }
+
   @override
   Widget build(BuildContext context) {
+    /// Timer controller from GetX
+    final DetectorWidgetController detectorController =
+        Get.put(DetectorWidgetController());
+
     // Return empty container while the camera is not initialized
     if (_cameraController == null || !_controller.value.isInitialized) {
       return const SizedBox.shrink();
@@ -117,10 +159,6 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
     return Stack(
       children: [
-        // AspectRatio(
-        //   aspectRatio: aspect,
-        //   child: CameraPreview(_controller),
-        // ),
         ClipRect(
           clipper: _MediaSizeClipper(mediaSize),
           child: Transform.scale(
@@ -139,30 +177,82 @@ class _DetectorWidgetState extends State<DetectorWidget>
               alignment: Alignment.topCenter,
               child: _boundingBoxes()),
         ),
+        detectorController.countdownTimer != null &&
+                detectorController.countdownTimer!.isActive
+            ? Obx(() => Center(
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.black.withOpacity(0.8),
+                    child: Center(
+                      child: Text(
+                        '${detectorController.countdownSeconds.value}',
+                        style: bold.copyWith(
+                            fontSize: 120,
+                            color: Theme.of(context).colorScheme.onPrimary),
+                      ),
+                    ),
+                  ),
+                ))
+            : const SizedBox.shrink()
+        // _countdownTimer != null && _countdownTimer!.isActive
+        //     ? Center(
+        //         child: Container(
+        //         width: double.infinity,
+        //         height: double.infinity,
+        //         color: Colors.black.withOpacity(0.5),
+        //         child: Center(
+        //           child: Text(
+        //             '${_countdownSeconds}',
+        //             style: bold.copyWith(
+        //                 fontSize: 48,
+        //                 color: Theme.of(context).colorScheme.onPrimary),
+        //           ),
+        //         ),
+        //       ))
+        //     : const SizedBox.shrink()
       ],
     );
   }
 
-  var lastResult = [];
-
   Widget _cameraFrame() {
+    log(results.toString());
+    final DetectorWidgetController detectorController = Get.find();
     Color frameColor = Colors.red; // Default color
-    const frameSize = Size(250, 500); // Adjust the size as per your requirement
-    // final screenWidth = ScreenParams.screenPreviewSize.width;
-    // final screenHeight = ScreenParams.screenPreviewSize.height;
-
-    // final screenSize = MediaQuery.of(context).size;
+    const frameSize = Size(250, 500); // Adjust the size as per requirement
 
     // Check if any recognition is fully within the frame
     if (results != null) {
-      for (var result in results!) {
-        if (isFullyWithinFrame(
-            result, frameSize, ScreenParams.screenPreviewSize)) {
-          log("IN FRAME");
-          frameColor = Colors.green; // Change color if fully within the frame
-          break; // Exit loop after the first match
-        } else {
-          log("NOT IN FRAME");
+      if (results!.isEmpty) {
+        // _resetCountdown();
+        detectorController.resetCountdown();
+      } else {
+        for (var result in results!) {
+          if (isFullyWithinFrame(
+              result, frameSize, ScreenParams.screenPreviewSize)) {
+            if (detectorController.countdownTimer == null ||
+                !detectorController.countdownTimer!.isActive) {
+              detectorController.afterFinish.value
+                  ? Future.delayed(const Duration(seconds: 1), () {
+                      detectorController.startCountdown();
+                    })
+                  : detectorController.startCountdown();
+              // detectorController.startCountdown();
+              // detectorController.checkLftPosition(true);
+              // _startCountdown();
+            }
+            // _resetCountdown();
+            log("IN FRAME");
+            frameColor = Colors.green; // Change color if fully within the frame
+            // break; // Exit loop after the first match
+          } else {
+            // _resetCountdown();
+            detectorController.resetCountdown();
+            // detectorController.checkLftPosition(false);
+            // detectorController.countdownTimer?.cancel();
+            // detectorController.countdownSeconds.value = 3;
+            log("NOT IN FRAME");
+          }
         }
       }
     }
@@ -174,13 +264,6 @@ class _DetectorWidgetState extends State<DetectorWidget>
         painter: CameraFramePainter(frameColor),
       ),
     );
-    // return Center(
-    //   child: FocusFrameOverlay(
-    //       frameRect: Rect.fromCenter(
-    //           center: Offset(screenWidth / 2, screenHeight / 2),
-    //           width: frameSize.width,
-    //           height: frameSize.height)),
-    // );
   }
 
   Widget _statsWidget() => (stats != null)
@@ -227,9 +310,9 @@ class _DetectorWidgetState extends State<DetectorWidget>
     final recognitionRect = recognition.renderLocation;
 
     // log("DETECTION L:${recognitionRect.left.toString()}, T:${recognitionRect.top.toString()}");
-    log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
+    // log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
     // log("FRAME L:${frameRect.left.toString()}, T:${frameRect.top.toString()}");
-    log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
+    // log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
 
     // Check if recognition is fully within the frame
     return recognitionRect.left >= frameRect.left &&
@@ -245,6 +328,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
         _cameraController?.stopImageStream();
         _detector?.stop();
         _subscription?.cancel();
+        // _countdownTimer?.cancel();
         break;
       case AppLifecycleState.resumed:
         _initStateAsync();
@@ -259,6 +343,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
     _cameraController?.dispose();
     _detector?.stop();
     _subscription?.cancel();
+    // _countdownTimer?.cancel();
     super.dispose();
   }
 }
