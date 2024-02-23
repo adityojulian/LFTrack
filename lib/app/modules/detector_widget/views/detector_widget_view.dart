@@ -230,8 +230,9 @@ class _DetectorWidgetState extends State<DetectorWidget>
         for (var result in results!) {
           if (isFullyWithinFrame(
               result, frameSize, ScreenParams.screenPreviewSize)) {
-            if (detectorController.countdownTimer == null ||
-                !detectorController.countdownTimer!.isActive) {
+            if ((detectorController.countdownTimer == null ||
+                    !detectorController.countdownTimer!.isActive) &&
+                Get.isDialogOpen == false) {
               detectorController.afterFinish.value
                   ? Future.delayed(const Duration(seconds: 1), () {
                       detectorController.startCountdown();

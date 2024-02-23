@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
+
+import 'package:ordinary/app/shared/theme.dart';
 
 class DetectorWidgetController extends GetxController {
   Timer? debounceTimer;
@@ -27,20 +30,20 @@ class DetectorWidgetController extends GetxController {
       if (countdownSeconds.value > 0) {
         countdownSeconds.value--;
         checkDuplicate(); // Function to run during countdown
-        update(); // Trigger GetX state update
+        // update(); // Trigger GetX state update
       } else {
         countdownTimer?.cancel();
         saveToDatabase();
         afterFinish.value = true;
         // update(); // Trigger GetX state update
       }
-      update();
+      update(); // Trigger GetX state update
     });
   }
 
   void resetCountdown() {
     countdownTimer?.cancel();
-    countdownSeconds.value = 3;
+    // countdownSeconds.value = 3;
     afterFinish.value = false;
     update(); // Reset to initial value
   }
@@ -52,7 +55,19 @@ class DetectorWidgetController extends GetxController {
 
   void saveToDatabase() {
     // Save result to Firebase
+    openSucessDialog();
     log("Function is being executed after countdown.");
+  }
+
+  void openSucessDialog() {
+    Future.delayed(const Duration(seconds: 3), () {
+      Get.back();
+    });
+
+    Get.dialog(AlertDialog(
+      content:
+          Text("The LFT scan result has been saved to database", style: medium),
+    ));
   }
 
   @override
