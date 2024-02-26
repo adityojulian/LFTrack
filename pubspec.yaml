@@ -47,6 +47,8 @@ dependencies:
   image_picker: ^1.0.0
   exif: ^3.1.4
   firebase_core: ^2.25.4
+  google_mlkit_barcode_scanning: ^0.10.0
+  google_mlkit_commons: ^0.6.1
 
 dev_dependencies:
   flutter_test:

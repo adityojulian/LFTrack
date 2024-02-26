@@ -9,6 +9,7 @@ import 'dart:isolate';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+// import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image/image.dart' as image_lib;
 import 'package:ordinary/app/models/recognition.dart';
 import 'package:ordinary/app/utils/image_utils.dart';

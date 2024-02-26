@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
+import 'package:ordinary/app/modules/detector_widget/service/barcode_image.dart';
 import 'package:ordinary/app/shared/theme.dart';
 import '../controllers/detector_widget_controller.dart';
 import 'package:ordinary/app/models/recognition.dart';
@@ -53,6 +57,12 @@ class _DetectorWidgetState extends State<DetectorWidget>
   // Timer? _countdownTimer;
   // int _countdownSeconds = 5;
 
+  // Barcode
+  final BarcodeScanner barcodeScanner = BarcodeScanner();
+  bool _canProcess = true;
+  bool _isBusy = false;
+  String? barcodeResult;
+
   @override
   void initState() {
     super.initState();
@@ -85,11 +95,15 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
     // cameras[0] for back-camera
     _cameraController = CameraController(
-      cameras[0],
-      // cameraDescription,
-      ResolutionPreset.medium,
-      enableAudio: false,
-    )..initialize().then((_) async {
+        cameras[0],
+        // cameraDescription,
+        ResolutionPreset.medium,
+        enableAudio: false,
+        // )
+        imageFormatGroup: Platform.isAndroid
+            ? ImageFormatGroup.nv21
+            : ImageFormatGroup.bgra8888)
+      ..initialize().then((_) async {
         await _controller.startImageStream(onLatestImageAvailable);
         setState(() {});
 
@@ -296,7 +310,19 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
   /// Callback to receive each frame [CameraImage] perform inference on it
   void onLatestImageAvailable(CameraImage cameraImage) async {
+    // LFT Object Detection Isolate
     _detector?.processFrame(cameraImage);
+
+    // Barcode
+    if (_canProcess && !_isBusy) {
+      final barcodePrediction = await barcodeScannerResult(
+          cameraImage, _controller, cameras[0], barcodeScanner);
+      setState(() {
+        barcodeResult = barcodePrediction;
+      });
+      // log(barcodePrediction.toString());
+    }
+    _isBusy = false;
   }
 
   bool isFullyWithinFrame(
@@ -344,6 +370,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
     _cameraController?.dispose();
     _detector?.stop();
     _subscription?.cancel();
+    _canProcess = false;
     // _countdownTimer?.cancel();
     super.dispose();
   }
