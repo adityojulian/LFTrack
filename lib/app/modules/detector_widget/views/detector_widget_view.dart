@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
-import 'package:ordinary/app/models/barcode_recognition.dart';
 import 'package:ordinary/app/models/barcode_scanner_processor.dart';
 // import 'package:ordinary/app/modules/detector_widget/service/barcode_image.dart';
 import 'package:ordinary/app/shared/theme.dart';
@@ -48,6 +47,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
   /// value is `null` until the detector is initialized.
   Detector? _detector;
   StreamSubscription? _subscription;
+  StreamSubscription? _barcodeSubscription;
 
   /// Results to draw bounding boxes
   List<Recognition>? results;
@@ -55,16 +55,8 @@ class _DetectorWidgetState extends State<DetectorWidget>
   /// Realtime stats
   Map<String, String>? stats;
 
-  // Countdown
-  // Timer? _countdownTimer;
-  // int _countdownSeconds = 5;
-
   // Barcode
   final BarcodeScanner barcodeScanner = BarcodeScanner();
-  bool _canProcess = true;
-  bool _isBusy = false;
-  String? barcodeResult;
-  bool _isDuplicateDialogShown = false;
   BarcodeScannerProcessor? barcodeScannerProcessor;
   List<Barcode>? barcodes;
   InputImage? inputImage;
@@ -76,23 +68,6 @@ class _DetectorWidgetState extends State<DetectorWidget>
     _initStateAsync();
   }
 
-  // void _initStateAsync() async {
-  //   // initialize preview and CameraImage stream
-  //   _initializeCamera();
-  //   // Spawn a new isolate
-  //   Detector.start().then((instance) {
-  //     setState(() {
-  //       _detector = instance;
-  //       _subscription = instance.resultsStream.stream.listen((values) {
-  //         setState(() {
-  //           results = values['recognitions'];
-  //           stats = values['stats'];
-  //         });
-  //       });
-  //     });
-  //   });
-  // }
-
   void _initStateAsync() async {
     // initialize preview and CameraImage stream
     _initializeCamera();
@@ -100,9 +75,16 @@ class _DetectorWidgetState extends State<DetectorWidget>
     Detector.start().then((instance) {
       setState(() {
         _detector = instance;
-        _subscription = instance.barcodeResultsStream.stream.listen((values) {
+        _barcodeSubscription =
+            instance.barcodeResultsStream.stream.listen((values) {
           setState(() {
             barcodes = values['barcodes'];
+          });
+        });
+        _subscription = instance.resultsStream.stream.listen((values) {
+          setState(() {
+            results = values['recognitions'];
+            stats = values['stats'];
           });
         });
       });
@@ -140,35 +122,6 @@ class _DetectorWidgetState extends State<DetectorWidget>
       });
   }
 
-  // Countdown
-  // void _startCountdown() {
-  //   _countdownTimer?.cancel(); // Cancel any existing timer
-  //   _countdownSeconds = 3; // Reset countdown
-  //   _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-  //     if (!isFullyWithinFrame(
-  //         results!.first, Size(250, 500), ScreenParams.screenPreviewSize)) {
-  //       _resetCountdown();
-  //       // _countdownSeconds = 3;
-  //     } else if (_countdownSeconds > 0) {
-  //       log("Function is being executed during countdown.");
-  //       setState(() {
-  //         _countdownSeconds--;
-  //       });
-  //     } else {
-  //       log("Function is being executed after countdown.");
-  //       _resetCountdown();
-  //       saveResultToFirebase(); // Save result when countdown finishes
-  //     }
-  //   });
-  // }
-
-  // void _resetCountdown() {
-  //   setState(() {
-  //     _countdownTimer?.cancel();
-  //     _countdownSeconds = 3; // Reset to initial value
-  //   });
-  // }
-
   void saveResultToFirebase() {
     // Implement your Firebase save operation here
     log("Saving result to Firebase...");
@@ -186,12 +139,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
       return const SizedBox.shrink();
     }
 
-    // var aspect = 1 /
-    //     (_controller.value.aspectRatio *
-    //         MediaQuery.of(context).size.aspectRatio);
-    // var aspect = 1 / (_controller.value.aspectRatio);
     final mediaSize = MediaQuery.of(context).size;
-    // final bottomPadding = MediaQuery.of(context).padding.bottom;
     final scale = 1 /
         (_controller.value.aspectRatio *
             (mediaSize.width /
@@ -235,22 +183,6 @@ class _DetectorWidgetState extends State<DetectorWidget>
                   ),
                 ))
             : const SizedBox.shrink()
-        // _countdownTimer != null && _countdownTimer!.isActive
-        //     ? Center(
-        //         child: Container(
-        //         width: double.infinity,
-        //         height: double.infinity,
-        //         color: Colors.black.withOpacity(0.5),
-        //         child: Center(
-        //           child: Text(
-        //             '${_countdownSeconds}',
-        //             style: bold.copyWith(
-        //                 fontSize: 48,
-        //                 color: Theme.of(context).colorScheme.onPrimary),
-        //           ),
-        //         ),
-        //       ))
-        //     : const SizedBox.shrink()
       ],
     );
   }
@@ -261,7 +193,8 @@ class _DetectorWidgetState extends State<DetectorWidget>
     //     log(barcodes!.first.cornerPoints.toString());
     //   }
     // }
-    // log(results.toString());
+    log("barcodes: ${barcodes.toString()}");
+    log("results: ${results.toString()}");
     final DetectorWidgetController detectorController = Get.find();
     Color frameColor = Colors.red; // Default color
     const frameSize = Size(250, 500); // Adjust the size as per requirement
@@ -332,76 +265,30 @@ class _DetectorWidgetState extends State<DetectorWidget>
 
   /// Returns Stack of bounding boxes
   Widget _boundingBoxes() {
-    if (results == null) {
+    if (results == null || barcodes == null) {
       return const SizedBox.shrink();
     }
+    if (barcodes != null) {
+      if (barcodes!.isEmpty) {
+        return const SizedBox.shrink();
+      }
+    }
     return Stack(
-        children: results!.map((box) => BoxWidget(result: box)).toList());
+        children: results!
+            .map((box) => BoxWidget(
+                  result: box,
+                  lftID: barcodes!.first.rawValue!,
+                ))
+            .toList());
   }
 
   /// Callback to receive each frame [CameraImage] perform inference on it
-  // void onLatestImageAvailable(CameraImage cameraImage) async {
-  //   final DetectorWidgetController detectorController = Get.find();
-
-  //   if (!_isBusy && _canProcess) {
-  //     _isBusy = true;
-
-  //     // Barcode processing
-  //     final barcodePrediction = await barcodeScannerResult(
-  //         cameraImage, _controller, cameras[0], barcodeScanner);
-  //     setState(() {
-  //       barcodeResult = barcodePrediction;
-  //     });
-
-  //     if (barcodePrediction != null) {
-  //       // Check if the barcode has already been scanned
-  //       bool alreadyScanned =
-  //           await detectorController.isBarcodeScanned(barcodePrediction);
-  //       if (!alreadyScanned) {
-  //         // Not a duplicate, so process the frame and reset the dialog flag
-  //         _isDuplicateDialogShown = false; // Reset the flag
-  //         _detector?.processFrame(cameraImage);
-  //       } else if (!_isDuplicateDialogShown) {
-  //         // It's a duplicate and the dialog has not been shown yet
-  //         _isDuplicateDialogShown = true; // Set the flag to prevent re-showing
-  //         await showDialog(
-  //           // Add 'await' to make execution wait until the dialog is closed
-  //           context: context,
-  //           builder: (BuildContext context) {
-  //             return AlertDialog(
-  //               title: Text("Duplicate Detected"),
-  //               content: Text(
-  //                   "This LFT has already been scanned. Please scan a new one."),
-  //               actions: <Widget>[
-  //                 TextButton(
-  //                   child: Text("OK"),
-  //                   onPressed: () {
-  //                     Navigator.of(context).pop(); // Close the dialog
-  //                   },
-  //                 ),
-  //               ],
-  //             );
-  //           },
-  //         );
-  //         _isDuplicateDialogShown =
-  //             false; // Reset flag when dialog is dismissed
-  //       }
-  //     }
-  //     _isBusy = false; // Always reset the busy flag when done
-  //   }
-  // }
-
-  /// Callback to receive each frame [CameraImage] perform inference on it
-  // void onLatestImageAvailable(CameraImage cameraImage) async {
-  //   // LFT Object Detection Isolate
-  //   _detector?.processFrame(cameraImage);
-  // }
-
   void onLatestImageAvailable(CameraImage cameraImage) async {
-    // LFT Object Detection Isolate
+    // LFT Object Detection & Barcode Recognition Isolate
     inputImage =
         barcodeScannerProcessor!.inputImageFromCameraImage(cameraImage);
-    _detector?.processFrame(inputImage!);
+    _detector?.processFrameBarcode(inputImage!);
+    _detector?.processFrame(cameraImage);
   }
 
   bool isFullyWithinFrame(
@@ -434,6 +321,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
         _cameraController?.stopImageStream();
         _detector?.stop();
         _subscription?.cancel();
+        _barcodeSubscription?.cancel();
         // _countdownTimer?.cancel();
         break;
       case AppLifecycleState.resumed:
@@ -449,7 +337,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
     _cameraController?.dispose();
     _detector?.stop();
     _subscription?.cancel();
-    _canProcess = false;
+    _barcodeSubscription?.cancel();
     // _countdownTimer?.cancel();
     super.dispose();
   }

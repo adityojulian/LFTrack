@@ -4,8 +4,9 @@ import 'package:ordinary/app/models/recognition.dart';
 /// Individual bounding box
 class BoxWidget extends StatelessWidget {
   final Recognition result;
+  final String lftID;
 
-  const BoxWidget({super.key, required this.result});
+  const BoxWidget({super.key, required this.result, required this.lftID});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,8 @@ class BoxWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(result.label),
-                  Text(" ${result.score.toStringAsFixed(2)}"),
+                  Text(" ${result.score.toStringAsFixed(2)}  "),
+                  Text(lftID)
                 ],
               ),
             ),

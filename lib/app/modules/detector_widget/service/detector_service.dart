@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 // import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image/image.dart' as image_lib;
-import 'package:ordinary/app/models/barcode_recognition.dart';
 import 'package:ordinary/app/models/recognition.dart';
 import 'package:ordinary/app/utils/image_utils.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -125,20 +124,17 @@ class Detector {
     return (await rootBundle.loadString(_labelPath)).split('\n');
   }
 
-  // /// Starts CameraImage processing
-  // void processFrame(CameraImage cameraImage) {
-  //   if (_isReady) {
-  //     _sendPort.send(_Command(_Codes.detect, args: [cameraImage]));
-  //   }
-  // }
+  /// Starts CameraImage processing
+  void processFrame(CameraImage cameraImage) {
+    if (_isReady) {
+      _sendPort.send(_Command(_Codes.detect, args: [cameraImage]));
+    }
+  }
 
   /// Starts CameraImage processing
-  void processFrame(InputImage inputImage) {
+  void processFrameBarcode(InputImage inputImage) {
     if (_isReady) {
-      Timer(
-          const Duration(seconds: 3),
-          () => _sendPort
-              .send(_Command(_Codes.barcodeDetect, args: [inputImage])));
+      _sendPort.send(_Command(_Codes.barcodeDetect, args: [inputImage]));
     }
   }
 
