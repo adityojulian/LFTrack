@@ -11,6 +11,8 @@ class DetectorWidgetController extends GetxController {
   final countdownSeconds = 3.obs; // Observable countdown seconds
   Timer? countdownTimer;
   final afterFinish = false.obs;
+  Set<String> scannedBarcodes = {};
+  // String? currentBarcode;
 
   void delayStart() {
     debounceTimer?.cancel();
@@ -55,6 +57,7 @@ class DetectorWidgetController extends GetxController {
 
   void saveToDatabase() {
     // Save result to Firebase
+    // scannedBarcodes.add(barcode);
     openSucessDialog();
     log("Function is being executed after countdown.");
   }
@@ -68,6 +71,28 @@ class DetectorWidgetController extends GetxController {
       content:
           Text("The LFT scan result has been saved to database", style: medium),
     ));
+  }
+
+  void openDuplicateDialog() {
+    Get.dialog(
+      AlertDialog(
+        content: Text("The LFT scan result is a duplicate", style: medium),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text("Close"))
+        ],
+      ),
+    );
+  }
+
+  // Barcode Controller for Databse Check and Duplicate Logic
+
+  Future<bool> isBarcodeScanned(String barcode) async {
+    // currentBarcode = barcode;
+    return scannedBarcodes.contains(barcode);
   }
 
   @override

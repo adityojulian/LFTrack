@@ -9,8 +9,10 @@ import 'dart:isolate';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 // import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image/image.dart' as image_lib;
+import 'package:ordinary/app/models/barcode_recognition.dart';
 import 'package:ordinary/app/models/recognition.dart';
 import 'package:ordinary/app/utils/image_utils.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -47,13 +49,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 
 /// All the command codes that can be sent and received between [Detector] and
 /// [_DetectorServer].
-enum _Codes {
-  init,
-  busy,
-  ready,
-  detect,
-  result,
-}
+enum _Codes { init, busy, ready, detect, result, barcodeDetect, barcodeResult }
 
 /// A command sent between [Detector] and [_DetectorServer].
 class _Command {
@@ -88,6 +84,9 @@ class Detector {
   // // Similarly, StreamControllers are stored in a queue so they can be handled
   // // asynchronously and serially.
   final StreamController<Map<String, dynamic>> resultsStream =
+      StreamController<Map<String, dynamic>>();
+
+  final StreamController<Map<String, dynamic>> barcodeResultsStream =
       StreamController<Map<String, dynamic>>();
 
   /// Open the database at [path] and launch the server on a background isolate..
@@ -126,10 +125,20 @@ class Detector {
     return (await rootBundle.loadString(_labelPath)).split('\n');
   }
 
+  // /// Starts CameraImage processing
+  // void processFrame(CameraImage cameraImage) {
+  //   if (_isReady) {
+  //     _sendPort.send(_Command(_Codes.detect, args: [cameraImage]));
+  //   }
+  // }
+
   /// Starts CameraImage processing
-  void processFrame(CameraImage cameraImage) {
+  void processFrame(InputImage inputImage) {
     if (_isReady) {
-      _sendPort.send(_Command(_Codes.detect, args: [cameraImage]));
+      Timer(
+          const Duration(seconds: 3),
+          () => _sendPort
+              .send(_Command(_Codes.barcodeDetect, args: [inputImage])));
     }
   }
 
@@ -162,6 +171,10 @@ class Detector {
         _isReady = true;
         resultsStream.add(command.args?[0] as Map<String, dynamic>);
         break;
+      case _Codes.barcodeResult:
+        _isReady = true;
+        barcodeResultsStream.add(command.args?[0] as Map<String, dynamic>);
+        break;
       default:
         debugPrint('Detector unrecognized command: ${command.code}');
     }
@@ -192,6 +205,9 @@ class _DetectorServer {
   _DetectorServer(this._sendPort);
 
   final SendPort _sendPort;
+
+  // Barcode
+  final BarcodeScanner barcodeScanner = BarcodeScanner();
 
   // ----------------------------------------------------------------------
   // Here the plugin is used from the background isolate.
@@ -236,9 +252,25 @@ class _DetectorServer {
         _sendPort.send(const _Command(_Codes.busy));
         _convertCameraImage(command.args?[0] as CameraImage);
         break;
+      case _Codes.barcodeDetect:
+        _sendPort.send(const _Command(_Codes.busy));
+        _analyseBarcode(command.args?[0] as InputImage);
+        break;
       default:
         debugPrint('_DetectorService unrecognized command ${command.code}');
     }
+  }
+
+  void _analyseBarcode(InputImage inputImage) async {
+    List<Barcode> barcodeRecognitions = [];
+    final barcodes = await barcodeScanner.processImage(inputImage);
+    for (final barcode in barcodes) {
+      if (barcode.rawValue != null) {
+        barcodeRecognitions.add(barcode);
+      }
+    }
+    Map<String, dynamic> barcodeResult = {"barcodes": barcodeRecognitions};
+    _sendPort.send(_Command(_Codes.barcodeResult, args: [barcodeResult]));
   }
 
   void _convertCameraImage(CameraImage cameraImage) {

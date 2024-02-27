@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
-import 'package:ordinary/app/modules/detector_widget/service/barcode_image.dart';
+import 'package:ordinary/app/models/barcode_recognition.dart';
+import 'package:ordinary/app/models/barcode_scanner_processor.dart';
+// import 'package:ordinary/app/modules/detector_widget/service/barcode_image.dart';
 import 'package:ordinary/app/shared/theme.dart';
 import '../controllers/detector_widget_controller.dart';
 import 'package:ordinary/app/models/recognition.dart';
@@ -62,6 +64,10 @@ class _DetectorWidgetState extends State<DetectorWidget>
   bool _canProcess = true;
   bool _isBusy = false;
   String? barcodeResult;
+  bool _isDuplicateDialogShown = false;
+  BarcodeScannerProcessor? barcodeScannerProcessor;
+  List<Barcode>? barcodes;
+  InputImage? inputImage;
 
   @override
   void initState() {
@@ -70,6 +76,23 @@ class _DetectorWidgetState extends State<DetectorWidget>
     _initStateAsync();
   }
 
+  // void _initStateAsync() async {
+  //   // initialize preview and CameraImage stream
+  //   _initializeCamera();
+  //   // Spawn a new isolate
+  //   Detector.start().then((instance) {
+  //     setState(() {
+  //       _detector = instance;
+  //       _subscription = instance.resultsStream.stream.listen((values) {
+  //         setState(() {
+  //           results = values['recognitions'];
+  //           stats = values['stats'];
+  //         });
+  //       });
+  //     });
+  //   });
+  // }
+
   void _initStateAsync() async {
     // initialize preview and CameraImage stream
     _initializeCamera();
@@ -77,10 +100,9 @@ class _DetectorWidgetState extends State<DetectorWidget>
     Detector.start().then((instance) {
       setState(() {
         _detector = instance;
-        _subscription = instance.resultsStream.stream.listen((values) {
+        _subscription = instance.barcodeResultsStream.stream.listen((values) {
           setState(() {
-            results = values['recognitions'];
-            stats = values['stats'];
+            barcodes = values['barcodes'];
           });
         });
       });
@@ -104,6 +126,10 @@ class _DetectorWidgetState extends State<DetectorWidget>
             ? ImageFormatGroup.nv21
             : ImageFormatGroup.bgra8888)
       ..initialize().then((_) async {
+        barcodeScannerProcessor = BarcodeScannerProcessor(
+            cameraController: _controller,
+            camera: cameras[0],
+            barcodeScanner: barcodeScanner);
         await _controller.startImageStream(onLatestImageAvailable);
         setState(() {});
 
@@ -230,7 +256,12 @@ class _DetectorWidgetState extends State<DetectorWidget>
   }
 
   Widget _cameraFrame() {
-    log(results.toString());
+    // if (barcodes != null) {
+    //   if (barcodes!.isNotEmpty) {
+    //     log(barcodes!.first.cornerPoints.toString());
+    //   }
+    // }
+    // log(results.toString());
     final DetectorWidgetController detectorController = Get.find();
     Color frameColor = Colors.red; // Default color
     const frameSize = Size(250, 500); // Adjust the size as per requirement
@@ -309,20 +340,68 @@ class _DetectorWidgetState extends State<DetectorWidget>
   }
 
   /// Callback to receive each frame [CameraImage] perform inference on it
+  // void onLatestImageAvailable(CameraImage cameraImage) async {
+  //   final DetectorWidgetController detectorController = Get.find();
+
+  //   if (!_isBusy && _canProcess) {
+  //     _isBusy = true;
+
+  //     // Barcode processing
+  //     final barcodePrediction = await barcodeScannerResult(
+  //         cameraImage, _controller, cameras[0], barcodeScanner);
+  //     setState(() {
+  //       barcodeResult = barcodePrediction;
+  //     });
+
+  //     if (barcodePrediction != null) {
+  //       // Check if the barcode has already been scanned
+  //       bool alreadyScanned =
+  //           await detectorController.isBarcodeScanned(barcodePrediction);
+  //       if (!alreadyScanned) {
+  //         // Not a duplicate, so process the frame and reset the dialog flag
+  //         _isDuplicateDialogShown = false; // Reset the flag
+  //         _detector?.processFrame(cameraImage);
+  //       } else if (!_isDuplicateDialogShown) {
+  //         // It's a duplicate and the dialog has not been shown yet
+  //         _isDuplicateDialogShown = true; // Set the flag to prevent re-showing
+  //         await showDialog(
+  //           // Add 'await' to make execution wait until the dialog is closed
+  //           context: context,
+  //           builder: (BuildContext context) {
+  //             return AlertDialog(
+  //               title: Text("Duplicate Detected"),
+  //               content: Text(
+  //                   "This LFT has already been scanned. Please scan a new one."),
+  //               actions: <Widget>[
+  //                 TextButton(
+  //                   child: Text("OK"),
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop(); // Close the dialog
+  //                   },
+  //                 ),
+  //               ],
+  //             );
+  //           },
+  //         );
+  //         _isDuplicateDialogShown =
+  //             false; // Reset flag when dialog is dismissed
+  //       }
+  //     }
+  //     _isBusy = false; // Always reset the busy flag when done
+  //   }
+  // }
+
+  /// Callback to receive each frame [CameraImage] perform inference on it
+  // void onLatestImageAvailable(CameraImage cameraImage) async {
+  //   // LFT Object Detection Isolate
+  //   _detector?.processFrame(cameraImage);
+  // }
+
   void onLatestImageAvailable(CameraImage cameraImage) async {
     // LFT Object Detection Isolate
-    _detector?.processFrame(cameraImage);
-
-    // Barcode
-    if (_canProcess && !_isBusy) {
-      final barcodePrediction = await barcodeScannerResult(
-          cameraImage, _controller, cameras[0], barcodeScanner);
-      setState(() {
-        barcodeResult = barcodePrediction;
-      });
-      // log(barcodePrediction.toString());
-    }
-    _isBusy = false;
+    inputImage =
+        barcodeScannerProcessor!.inputImageFromCameraImage(cameraImage);
+    _detector?.processFrame(inputImage!);
   }
 
   bool isFullyWithinFrame(
