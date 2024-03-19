@@ -140,30 +140,48 @@ class _DetectorWidgetState extends State<DetectorWidget>
     }
 
     final mediaSize = MediaQuery.of(context).size;
+    // final mediaSize = ScreenParams.screenPreviewSize;
+
+    var aspect = 1 / _controller.value.aspectRatio;
+    // var aspect = 1 /
+    //     (_controller.value.aspectRatio *
+    //         (mediaSize.width /
+    //             (mediaSize.height - AppBar().preferredSize.height)));
+
     final scale = 1 /
         (_controller.value.aspectRatio *
             (mediaSize.width /
                 (mediaSize.height - AppBar().preferredSize.height)));
 
+    // log("Scale: $scale");
+
     return Stack(
       children: [
-        ClipRect(
-          clipper: _MediaSizeClipper(mediaSize),
-          child: Transform.scale(
-              scale: scale,
-              alignment: Alignment.topCenter,
-              child: CameraPreview(_controller)),
+        // ClipRect(
+        //   clipper: _MediaSizeClipper(mediaSize),
+        //   child: Transform.scale(
+        //       scale: scale,
+        //       alignment: Alignment.topCenter,
+        //       child: CameraPreview(_controller)),
+        // ),
+        AspectRatio(
+          aspectRatio: aspect,
+          child: CameraPreview(_controller),
         ),
         // Stats
         // _statsWidget(),
-        _cameraFrame(),
+        AspectRatio(aspectRatio: aspect, child: _cameraFrame(scale)),
         // Bounding boxes
-        ClipRect(
-          clipper: _MediaSizeClipper(mediaSize),
-          child: Transform.scale(
-              scale: scale,
-              alignment: Alignment.topCenter,
-              child: _boundingBoxes()),
+        // ClipRect(
+        //   clipper: _MediaSizeClipper(mediaSize),
+        //   child: Transform.scale(
+        //       scale: scale,
+        //       alignment: Alignment.topCenter,
+        //       child: _boundingBoxes()),
+        // ),
+        AspectRatio(
+          aspectRatio: aspect,
+          child: _boundingBoxes(),
         ),
         detectorController.countdownTimer != null &&
                 detectorController.countdownTimer!.isActive
@@ -187,7 +205,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
     );
   }
 
-  Widget _cameraFrame() {
+  Widget _cameraFrame(double scale) {
     // if (barcodes != null) {
     //   if (barcodes!.isNotEmpty) {
     //     log(barcodes!.first.cornerPoints.toString());
@@ -195,6 +213,8 @@ class _DetectorWidgetState extends State<DetectorWidget>
     // }
     log("barcodes: ${barcodes.toString()}");
     log("results: ${results.toString()}");
+    log("screen: ${ScreenParams.screenPreviewSize.toString()}");
+    log("scale: ${scale.toString()}");
     final DetectorWidgetController detectorController = Get.find();
     Color frameColor = Colors.red; // Default color
     const frameSize = Size(250, 500); // Adjust the size as per requirement
@@ -207,7 +227,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
       } else {
         for (var result in results!) {
           if (isFullyWithinFrame(
-              result, frameSize, ScreenParams.screenPreviewSize)) {
+              result, frameSize, ScreenParams.screenPreviewSize, scale)) {
             if ((detectorController.countdownTimer == null ||
                     !detectorController.countdownTimer!.isActive) &&
                 Get.isDialogOpen == false) {
@@ -268,16 +288,16 @@ class _DetectorWidgetState extends State<DetectorWidget>
     if (results == null || barcodes == null) {
       return const SizedBox.shrink();
     }
-    if (barcodes != null) {
-      if (barcodes!.isEmpty) {
-        return const SizedBox.shrink();
-      }
-    }
+    // if (barcodes != null) {
+    //   if (barcodes!.isEmpty) {
+    //     return const SizedBox.shrink();
+    //   }
+    // }
     return Stack(
         children: results!
             .map((box) => BoxWidget(
                   result: box,
-                  lftID: barcodes!.first.rawValue!,
+                  lftID: barcodes!.isNotEmpty ? barcodes!.first.rawValue! : "",
                 ))
             .toList());
   }
@@ -292,7 +312,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
   }
 
   bool isFullyWithinFrame(
-      Recognition recognition, Size frameSize, Size screenSize) {
+      Recognition recognition, Size frameSize, Size screenSize, double scale) {
     // Frame boundaries
     final frameRect = Rect.fromCenter(
         center: Offset(screenSize.width / 2, screenSize.height / 2),
@@ -300,18 +320,29 @@ class _DetectorWidgetState extends State<DetectorWidget>
         height: frameSize.height);
 
     // Recognition boundaries (assuming `recognition.renderLocation` is a Rect)
+    // log("Scale: $scale");
     final recognitionRect = recognition.renderLocation;
+    // var recLeft = recognitionRect.left * scale;
+    // var recRight = recognitionRect.right * scale;
+    // var recTop = recognitionRect.top * scale;
+    // var recBottom = recognitionRect.bottom * scale;
 
-    // log("DETECTION L:${recognitionRect.left.toString()}, T:${recognitionRect.top.toString()}");
-    // log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
-    // log("FRAME L:${frameRect.left.toString()}, T:${frameRect.top.toString()}");
-    // log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
+    log("DETECTION L:${recognitionRect.left.toString()}, T:${recognitionRect.top.toString()}");
+    log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
+    // log("DETECTION L:${recLeft.toString()}, T:${recTop.toString()}");
+    // log("DETECTION R:${recRight.toString()}, B:${recBottom.toString()}");
+    log("FRAME L:${frameRect.left.toString()}, T:${frameRect.top.toString()}");
+    log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
 
     // Check if recognition is fully within the frame
     return recognitionRect.left >= frameRect.left &&
         recognitionRect.top >= frameRect.top &&
         recognitionRect.right <= (frameRect.right + 10) &&
         recognitionRect.bottom <= frameRect.bottom;
+    // return recLeft >= frameRect.left &&
+    //     recTop >= frameRect.top &&
+    //     recRight <= frameRect.right &&
+    //     recBottom <= frameRect.bottom;
   }
 
   @override
