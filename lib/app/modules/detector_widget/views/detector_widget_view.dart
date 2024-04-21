@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:ordinary/app/models/barcode_scanner_processor.dart';
+import 'package:ordinary/app/modules/detector_widget/views/stats_simple.dart';
 // import 'package:ordinary/app/modules/detector_widget/service/barcode_image.dart';
 import 'package:ordinary/app/shared/theme.dart';
 import '../controllers/detector_widget_controller.dart';
@@ -21,10 +22,8 @@ import 'package:ordinary/app/modules/detector_widget/views/stats_widget.dart';
 
 /// [DetectorWidget] sends each frame for inference
 class DetectorWidget extends StatefulWidget {
-  final double bottomPadding;
-
   /// Constructor
-  const DetectorWidget({super.key, required this.bottomPadding});
+  const DetectorWidget({super.key});
 
   @override
   State<DetectorWidget> createState() => _DetectorWidgetState();
@@ -169,6 +168,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
           child: CameraPreview(_controller),
         ),
         // Stats
+        _statsSimple(),
         // _statsWidget(),
         AspectRatio(aspectRatio: aspect, child: _cameraFrame(scale)),
         // Bounding boxes
@@ -211,10 +211,10 @@ class _DetectorWidgetState extends State<DetectorWidget>
     //     log(barcodes!.first.cornerPoints.toString());
     //   }
     // }
-    log("barcodes: ${barcodes.toString()}");
-    log("results: ${results.toString()}");
-    log("screen: ${ScreenParams.screenPreviewSize.toString()}");
-    log("scale: ${scale.toString()}");
+    // log("barcodes: ${barcodes.toString()}");
+    // log("results: ${results.toString()}");
+    // log("screen: ${ScreenParams.screenPreviewSize.toString()}");
+    // log("scale: ${scale.toString()}");
     final DetectorWidgetController detectorController = Get.find();
     Color frameColor = Colors.red; // Default color
     const frameSize = Size(250, 500); // Adjust the size as per requirement
@@ -233,15 +233,21 @@ class _DetectorWidgetState extends State<DetectorWidget>
                 Get.isDialogOpen == false) {
               detectorController.afterFinish.value
                   ? Future.delayed(const Duration(seconds: 1), () {
-                      detectorController.startCountdown();
+                      detectorController.startCountdown(
+                          result.label,
+                          barcodes!.isNotEmpty ? barcodes!.first.rawValue! : "",
+                          result.score.toStringAsFixed(2));
                     })
-                  : detectorController.startCountdown();
+                  : detectorController.startCountdown(
+                      result.label,
+                      barcodes!.isNotEmpty ? barcodes!.first.rawValue! : "",
+                      result.score.toStringAsFixed(2));
               // detectorController.startCountdown();
               // detectorController.checkLftPosition(true);
               // _startCountdown();
             }
             // _resetCountdown();
-            log("IN FRAME");
+            // log("IN FRAME");
             frameColor = Colors.green; // Change color if fully within the frame
             // break; // Exit loop after the first match
           } else {
@@ -250,7 +256,7 @@ class _DetectorWidgetState extends State<DetectorWidget>
             // detectorController.checkLftPosition(false);
             // detectorController.countdownTimer?.cancel();
             // detectorController.countdownSeconds.value = 3;
-            log("NOT IN FRAME");
+            // log("NOT IN FRAME");
           }
         }
       }
@@ -282,6 +288,62 @@ class _DetectorWidgetState extends State<DetectorWidget>
           ),
         )
       : const SizedBox.shrink();
+
+  Widget _statsSimple() {
+    // Determine which widget to show based on the condition
+    Widget child = (results == null ||
+            barcodes == null ||
+            stats == null ||
+            (results != null && results!.isEmpty))
+        ? Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(top: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text("No LFT",
+                  key: ValueKey("no_lft"),
+                  style: medium.copyWith(
+                      fontSize: 24,
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+          )
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 26),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: results!
+                  .map((result) => StatsSimple(
+                        key: ValueKey("stats_${result.label}"),
+                        result,
+                        barcodes!.isNotEmpty ? barcodes!.first.rawValue! : "",
+                        stats!,
+                      ))
+                  .toList(),
+            ),
+          );
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        color: Theme.of(context).colorScheme.background,
+        child: AnimatedSwitcher(
+          transitionBuilder: (child, animation) {
+            return ScaleTransition(
+              scale: animation,
+              child: child,
+            );
+          },
+          duration:
+              const Duration(seconds: 1), // Set the duration of the transition
+          child: child,
+        ),
+      ),
+    );
+  }
 
   /// Returns Stack of bounding boxes
   Widget _boundingBoxes() {
@@ -327,12 +389,12 @@ class _DetectorWidgetState extends State<DetectorWidget>
     // var recTop = recognitionRect.top * scale;
     // var recBottom = recognitionRect.bottom * scale;
 
-    log("DETECTION L:${recognitionRect.left.toString()}, T:${recognitionRect.top.toString()}");
-    log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
-    // log("DETECTION L:${recLeft.toString()}, T:${recTop.toString()}");
-    // log("DETECTION R:${recRight.toString()}, B:${recBottom.toString()}");
-    log("FRAME L:${frameRect.left.toString()}, T:${frameRect.top.toString()}");
-    log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
+    // log("DETECTION L:${recognitionRect.left.toString()}, T:${recognitionRect.top.toString()}");
+    // log("DETECTION R:${recognitionRect.right.toString()}, B:${recognitionRect.bottom.toString()}");
+    // // log("DETECTION L:${recLeft.toString()}, T:${recTop.toString()}");
+    // // log("DETECTION R:${recRight.toString()}, B:${recBottom.toString()}");
+    // log("FRAME L:${frameRect.left.toString()}, T:${frameRect.top.toString()}");
+    // log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
 
     // Check if recognition is fully within the frame
     return recognitionRect.left >= frameRect.left &&

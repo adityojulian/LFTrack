@@ -16,12 +16,12 @@ class OnBoardingWidgets extends StatelessWidget {
         children: [
           Container(
             height: Get.height * 0.65,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/${image}'),
-                scale: 1.75,
-              ),
-            ),
+            // decoration: BoxDecoration(
+            //   image: DecorationImage(
+            //     image: AssetImage('assets/images/${image}'),
+            //     scale: 1.75,
+            //   ),
+            // ),
           ),
           Container(
             height: Get.height * 0.35,

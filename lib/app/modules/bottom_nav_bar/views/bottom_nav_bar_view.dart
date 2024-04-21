@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:ordinary/app/models/screen_params.dart';
+import 'package:ordinary/app/modules/detector_widget/views/detector_widget_view.dart';
 import 'package:ordinary/app/modules/history/views/history_view.dart';
-import 'package:ordinary/app/modules/home/views/home_view.dart';
+// import 'package:ordinary/app/modules/home/views/home_view.dart';
 // import 'package:ordinary/app/modules/placeholder/views/placeholder_view.dart';
 
 import '../controllers/bottom_nav_bar_controller.dart';
@@ -11,14 +13,15 @@ class BottomNavBarView extends GetView<BottomNavBarController> {
   const BottomNavBarView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    ScreenParams.screenSize = MediaQuery.sizeOf(context);
 
     return Scaffold(
       body: Obx(
         () => SafeArea(
           child: <Widget>[
-            HomeView(bottomPadding: bottomPadding),
-            const HistoryView()
+            // HomeView(bottomPadding: bottomPadding),
+            const DetectorWidget(),
+            HistoryView()
           ][controller.currentIndex.value],
         ),
       ),

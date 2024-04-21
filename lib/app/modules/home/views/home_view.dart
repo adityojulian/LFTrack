@@ -18,9 +18,7 @@ class HomeView extends GetView<HomeController> {
       //   title: const Text('HomeView'),
       //   centerTitle: true,
       // ),
-      body: DetectorWidget(
-        bottomPadding: bottomPadding,
-      ),
+      body: DetectorWidget(),
     );
   }
 }
