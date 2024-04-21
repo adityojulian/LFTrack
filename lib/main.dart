@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ordinary/app/modules/login/controllers/login_controller.dart';
 import 'package:ordinary/app/shared/theme.dart';
 // import 'package:ordinary/global_bindings.dart';
 // import 'package:ordinary/views/camera_screen.dart';
@@ -12,7 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  ).then((value) => Get.put(LoginController()));
   runApp(const MyApp());
 }
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
           colorSchemeSeed: ColorSeed.baseColor.color,
           brightness: Brightness.dark),
       themeMode: ThemeMode.light,
-      initialRoute: Routes.BOTTOM_NAV_BAR,
+      initialRoute: Routes.LOGIN,
       getPages: AppPages.routes,
     );
   }

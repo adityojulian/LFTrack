@@ -10,6 +10,7 @@ abstract class Routes {
   static const HISTORY = _Paths.HISTORY;
   static const PLACEHOLDER = _Paths.PLACEHOLDER;
   static const BOTTOM_NAV_BAR = _Paths.BOTTOM_NAV_BAR;
+  static const LOGIN = _Paths.LOGIN;
 }
 
 abstract class _Paths {
@@ -21,4 +22,5 @@ abstract class _Paths {
   static const HISTORY = '/history';
   static const PLACEHOLDER = '/placeholder';
   static const BOTTOM_NAV_BAR = '/bottom-nav-bar';
+  static const LOGIN = '/login';
 }
