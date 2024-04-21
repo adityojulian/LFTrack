@@ -289,74 +289,61 @@ class _DetectorWidgetState extends State<DetectorWidget>
         )
       : const SizedBox.shrink();
 
-  Widget _statsSimple() =>
-      (results == null || barcodes == null || stats == null)
-          ? Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                color: Theme.of(context).colorScheme.background,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    padding: const EdgeInsets.all(
-                        8), // Adds padding inside the container
-                    margin: const EdgeInsets.only(
-                        top: 4), // Adds space between key and value
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary, // Sets the background color to the primary color
-
-                      borderRadius: BorderRadius.circular(
-                          4), // Rounded corners for the container
-                    ),
-                    child: Text("No LFT",
-                        style: medium.copyWith(
-                            fontSize: 24,
-                            color: Theme.of(context).colorScheme.onPrimary)),
-                  ),
-                ),
+  Widget _statsSimple() {
+    // Determine which widget to show based on the condition
+    Widget child = (results == null ||
+            barcodes == null ||
+            stats == null ||
+            (results != null && results!.isEmpty))
+        ? Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(top: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(4),
               ),
-            )
-          : Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                color: Theme.of(context).colorScheme.background,
-                child: (results != null && results!.isEmpty)
-                    ? Padding(
-                        padding: EdgeInsets.only(bottom: 18),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.only(top: 4),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
+              child: Text("No LFT",
+                  key: ValueKey("no_lft"),
+                  style: medium.copyWith(
+                      fontSize: 24,
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+          )
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 26),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: results!
+                  .map((result) => StatsSimple(
+                        key: ValueKey("stats_${result.label}"),
+                        result,
+                        barcodes!.isNotEmpty ? barcodes!.first.rawValue! : "",
+                        stats!,
+                      ))
+                  .toList(),
+            ),
+          );
 
-                            borderRadius: BorderRadius.circular(
-                                4), // Rounded corners for the container
-                          ),
-                          child: Text("No LFT",
-                              style: medium.copyWith(
-                                  fontSize: 24,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary)),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 26),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: results!
-                              .map((result) => StatsSimple(
-                                  result,
-                                  barcodes!.isNotEmpty
-                                      ? barcodes!.first.rawValue!
-                                      : "",
-                                  stats!))
-                              .toList(),
-                        ),
-                      ),
-              ),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        color: Theme.of(context).colorScheme.background,
+        child: AnimatedSwitcher(
+          transitionBuilder: (child, animation) {
+            return ScaleTransition(
+              scale: animation,
+              child: child,
             );
+          },
+          duration:
+              const Duration(seconds: 1), // Set the duration of the transition
+          child: child,
+        ),
+      ),
+    );
+  }
 
   /// Returns Stack of bounding boxes
   Widget _boundingBoxes() {

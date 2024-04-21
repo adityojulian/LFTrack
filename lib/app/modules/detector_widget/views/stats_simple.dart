@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ordinary/app/models/recognition.dart';
@@ -17,7 +15,7 @@ class StatsSimple extends StatelessWidget {
   Widget columnData(String key, String value, BuildContext context) {
     // Provides a consistent style for the key
     TextStyle keyStyle =
-        bold.copyWith(color: Theme.of(context).colorScheme.primary);
+        regular.copyWith(color: Theme.of(context).colorScheme.primary);
     // Provides a consistent style for the value within a bordered container
     TextStyle valueStyle =
         medium.copyWith(color: Theme.of(context).colorScheme.onPrimary);
@@ -32,15 +30,14 @@ class StatsSimple extends StatelessWidget {
           Text(key, style: keyStyle),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 8), // Adds padding inside the container
+              horizontal: 8,
+            ), // Adds padding inside the container
             margin: const EdgeInsets.only(
                 top: 4), // Adds space between key and value
             decoration: BoxDecoration(
               color: Theme.of(context)
                   .colorScheme
                   .primary, // Sets the background color to the primary color
-              border:
-                  Border.all(color: Theme.of(context).colorScheme.onBackground),
               borderRadius:
                   BorderRadius.circular(4), // Rounded corners for the container
             ),

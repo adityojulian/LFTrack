@@ -11,6 +11,10 @@ const backgroundBlue = Color(0xFFC9E7FF);
 const subtleRed = Color(0xFFE28173);
 const lighRed = Color(0xFFFF6A88);
 
+TextStyle light = GoogleFonts.poppins(
+  fontWeight: FontWeight.w300,
+);
+
 TextStyle regular = GoogleFonts.poppins(
   fontWeight: FontWeight.w400,
 );

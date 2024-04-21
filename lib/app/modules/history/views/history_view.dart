@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ordinary/app/models/lft_result.dart';
+import 'package:ordinary/app/modules/history/views/date_selection_tabs.dart';
 import 'package:ordinary/app/shared/theme.dart';
 
 import '../controllers/history_controller.dart';
@@ -51,19 +52,9 @@ class HistoryView extends GetView<HistoryController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _formatDateTime(result.createdOn.toDate()),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text(_formatDateTime(result.createdOn.toDate()), style: bold),
                 const SizedBox(height: 4),
-                Text(
-                  result.barcode,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                  ),
-                ),
+                Text(result.barcode, style: regular),
               ],
             ),
           ),
@@ -102,7 +93,7 @@ class HistoryView extends GetView<HistoryController> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "-",
+                          result.lftResult == "invalid" ? "" : "-",
                           style: bold.copyWith(
                               color: _getResultColor(result.lftResult)),
                         ),
@@ -234,16 +225,36 @@ class HistoryView extends GetView<HistoryController> {
         ),
         centerTitle: false,
         actions: [
-          TextButton(
-              onPressed: () {
-                controller.exportFilteredResultsToCsv();
-              },
-              child: const Text("Export"))
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Export",
+                  style: medium,
+                ),
+                IconButton(
+                    style: IconButton.styleFrom(
+                        elevation: 1,
+                        shadowColor: Colors.transparent,
+                        backgroundColor: Theme.of(context).colorScheme.primary),
+                    onPressed: () {
+                      controller.exportFilteredResultsToCsv();
+                    },
+                    icon: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    )),
+              ],
+            ),
+          )
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Scrollbar(
+        child: RawScrollbar(
+          radius: Radius.circular(5),
           thumbVisibility: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -308,7 +319,7 @@ class HistoryView extends GetView<HistoryController> {
                                     ),
                                   ],
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.arrow_forward_ios,
                                   color: Colors.white,
                                 ),
@@ -324,9 +335,22 @@ class HistoryView extends GetView<HistoryController> {
                       decoration: InputDecoration(
                         label: Text(
                           "Search by result...",
-                          style: regular,
+                          style: regular.copyWith(fontSize: 14),
                         ),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(10)),
                         border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant),
                             borderRadius: BorderRadius.circular(10)),
                         suffixIcon: Icon(Icons.search),
                       ),
@@ -335,7 +359,7 @@ class HistoryView extends GetView<HistoryController> {
                   // Date picker button
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: datePickerWidget(context),
+                    child: DateSelectionTabs(),
                   ),
 
                   Padding(
@@ -350,11 +374,16 @@ class HistoryView extends GetView<HistoryController> {
                         );
                       }
                       return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         height: 300,
-                        child: Scrollbar(
+                        child: RawScrollbar(
+                          // thumbColor: Theme.of(context).colorScheme.tertiary,
+                          radius: Radius.circular(5),
                           thumbVisibility: true,
                           child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            padding: const EdgeInsets.only(bottom: 8),
                             itemCount: controller.filteredLftResults.length,
                             itemBuilder: (context, index) {
                               final result =

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ordinary/app/models/recognition.dart';
+import 'package:ordinary/app/shared/theme.dart';
+import 'package:ordinary/app/utils/string_utilz.dart';
 
 /// Individual bounding box
 class BoxWidget extends StatelessWidget {
@@ -34,9 +36,14 @@ class BoxWidget extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(result.label),
-                  Text(" ${result.score.toStringAsFixed(2)}  "),
-                  Text(lftID != "" ? lftID! : "No barcode")
+                  Text(
+                    result.label.capitalize_custom(),
+                    style: regular.copyWith(color: Colors.black),
+                  ),
+                  Text(" ${result.score.toStringAsFixed(2)}  ",
+                      style: regular.copyWith(color: Colors.black)),
+                  Text(lftID != "" ? lftID! : "No barcode",
+                      style: regular.copyWith(color: Colors.black))
                 ],
               ),
             ),

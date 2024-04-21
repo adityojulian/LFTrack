@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ordinary/app/models/lft_result.dart';
+import 'package:ordinary/app/shared/theme.dart';
 import 'package:ordinary/firebase_constants.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -113,9 +114,82 @@ class HistoryController extends GetxController {
   }
 
   final DateFormat dateFormat = DateFormat('dd-MM-yyyy_hh-mm-ss');
+  final DateFormat date = DateFormat('dd-MM-yyyy');
 
   // Method to export data to a CSV file
   Future<void> exportFilteredResultsToCsv() async {
+    // Confirmation dialog
+    bool confirmationResult = await Get.dialog<bool>(
+          AlertDialog(
+            title: Text(
+              'Export to CSV',
+              style: bold,
+            ),
+            content: SingleChildScrollView(
+              // Enable scrolling on overflow
+              child: Column(
+                mainAxisSize:
+                    MainAxisSize.min, // Takes up minimal space vertically
+                children: [
+                  Text(
+                    'The CSV file will include the current active filters:',
+                    style: regular,
+                  ),
+                  SizedBox(height: 16),
+                  if (searchText.isEmpty &&
+                      selectedDate == null &&
+                      selectedDateRange == null)
+                    ListTile(
+                      leading: Icon(Icons.clear),
+                      title: Text('No filter is active', style: regular),
+                      // subtitle: Text(searchText, style: bold),
+                    ),
+                  if (searchText.isNotEmpty)
+                    ListTile(
+                      leading: Icon(Icons.search),
+                      title: Text('Search Value', style: regular),
+                      subtitle: Text(searchText, style: bold),
+                    ),
+                  if (selectedDate != null)
+                    ListTile(
+                      leading: Icon(Icons.calendar_today),
+                      title: Text('Picked Date', style: regular),
+                      subtitle: Text(date.format(selectedDate!), style: bold),
+                    ),
+                  if (selectedDateRange != null)
+                    ListTile(
+                      leading: Icon(Icons.date_range),
+                      title: Text('Picked Date Range', style: regular),
+                      subtitle: Text(
+                          '${date.format(selectedDateRange!.start)} to ${date.format(selectedDateRange!.end)}',
+                          style: bold),
+                    ),
+                  SizedBox(height: 24),
+                  Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      TextButton(
+                        child: Text('Cancel', style: medium),
+                        onPressed: () => Get.back(result: false),
+                      ),
+                      SizedBox(width: 8),
+                      TextButton(
+                        child: Text('Proceed', style: medium),
+                        onPressed: () => Get.back(result: true),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ) ??
+        false; // Handle the null case by defaulting to 'false'
+
+    // If user confirmed, proceed with export
+    if (!confirmationResult) return;
+
     List<List<dynamic>> rows = [];
 
     // Create a header row
@@ -159,15 +233,6 @@ class HistoryController extends GetxController {
     } else {
       log('Permission Denied');
     }
-    // Ensure necessary permissions are granted
-    // if (await _requestStoragePermission()) {
-    //   final File file = File(path);
-    //   await file.writeAsString(csv);
-
-    //   // If you want to share the file or perform other actions, you can do so here
-    //   log('CSV Exported: $path');
-    // } else {
-    //   log('Permission Denied');
     // }
   }
 
