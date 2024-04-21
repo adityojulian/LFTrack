@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:ordinary/app/models/lft_result.dart';
 import 'package:ordinary/app/shared/theme.dart';
@@ -13,15 +14,62 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 
-class HistoryController extends GetxController {
+class HistoryController extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  late TabController tabController;
+  late ScrollController mainScrollController;
+  late ScrollController listScrollController;
+
   final Rx<List<LFTResult>> _lftResults = Rx<List<LFTResult>>([]);
   List<LFTResult> get lftResults => _lftResults.value;
+
+  // Filter-related observables
+  final RxString _searchText = ''.obs;
+  final Rx<DateTime?> _selectedDate = Rx<DateTime?>(null);
+  final Rx<DateTimeRange?> _selectedDateRange = Rx<DateTimeRange?>(null);
+
+  final GetStorage _storage = GetStorage(); // Using GetStorage for persistence
+
+  // Public getters for filter values
+  String get searchText => _searchText.value;
+  DateTime? get selectedDate => _selectedDate.value;
+  DateTimeRange? get selectedDateRange => _selectedDateRange.value;
 
   @override
   void onInit() {
     super.onInit();
-    // Subscribe to the LFT results stream
     _lftResults.bindStream(getLFTResultsStream());
+    // tabController = TabController(vsync: this, length: 2, initialIndex: 0);
+    mainScrollController = ScrollController();
+    listScrollController = ScrollController();
+
+    // Initialize the TabController
+    int lastTabIndex = _storage.read('lastTabIndex') ?? 0;
+    tabController =
+        TabController(vsync: this, length: 2, initialIndex: lastTabIndex);
+
+    // Add listener to update storage when tab changes
+    tabController.addListener(_handleTabSelection);
+  }
+
+  void loadFilters() {
+    // Load Filters
+    _searchText.value = _storage.read('searchText') ?? '';
+    _selectedDate.value = _storage.read('selectedDate') != null
+        ? DateTime.tryParse(_storage.read('selectedDate'))
+        : null;
+    var rangeStart = _storage.read('selectedDateRangeStart');
+    var rangeEnd = _storage.read('selectedDateRangeEnd');
+    if (rangeStart != null && rangeEnd != null) {
+      _selectedDateRange.value = DateTimeRange(
+          start: DateTime.parse(rangeStart), end: DateTime.parse(rangeEnd));
+    }
+  }
+
+  void _handleTabSelection() {
+    if (tabController.indexIsChanging) {
+      _storage.write('lastTabIndex', tabController.index);
+    }
   }
 
   Stream<List<LFTResult>> getLFTResultsStream() {
@@ -34,16 +82,6 @@ class HistoryController extends GetxController {
         .map((query) =>
             query.docs.map((item) => LFTResult.fromJson(item.data())).toList());
   }
-
-  // Filter-related observables
-  final RxString _searchText = ''.obs;
-  final Rx<DateTime?> _selectedDate = Rx<DateTime?>(null);
-  final Rx<DateTimeRange?> _selectedDateRange = Rx<DateTimeRange?>(null);
-
-  // Public getters for filter values
-  String get searchText => _searchText.value;
-  DateTime? get selectedDate => _selectedDate.value;
-  DateTimeRange? get selectedDateRange => _selectedDateRange.value;
 
   // Filtered list of results
   List<LFTResult> get filteredLftResults {
@@ -76,20 +114,31 @@ class HistoryController extends GetxController {
   // Method to update the search text
   void updateSearchText(String text) {
     _searchText.value = text;
+    _storage.write('searchText', text); // Save to storage
   }
 
   // Method to update the selected date
   void updateSelectedDate(DateTime? date) {
     _selectedDate.value = date;
+    _storage.write('selectedDate', date?.toIso8601String()); // Save to storage
     _selectedDateRange.value =
         null; // Clear date range when a single date is selected
+    _storage.remove('selectedDateRangeStart');
+    _storage.remove('selectedDateRangeEnd');
   }
 
   // Method to update the selected date range
   void updateSelectedDateRange(DateTimeRange? range) {
-    log("date: ${range.toString()}");
     _selectedDateRange.value = range;
+    if (range != null) {
+      _storage.write('selectedDateRangeStart', range.start.toIso8601String());
+      _storage.write('selectedDateRangeEnd', range.end.toIso8601String());
+    } else {
+      _storage.remove('selectedDateRangeStart');
+      _storage.remove('selectedDateRangeEnd');
+    }
     _selectedDate.value = null; // Clear single date when a range is selected
+    _storage.remove('selectedDate');
   }
 
   // Utility method to check if two dates are the same day
@@ -247,18 +296,14 @@ class HistoryController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+
+    loadFilters();
   }
 
   @override
   void onClose() {
+    tabController.removeListener(_handleTabSelection);
+    tabController.dispose();
     super.onClose();
-  }
-
-  void signOut() {
-    try {
-      auth.signOut();
-    } catch (e) {
-      print(e.toString());
-    }
   }
 }

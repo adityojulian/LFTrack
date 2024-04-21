@@ -18,8 +18,7 @@ class OnboardingView extends GetView<OnboardingController> {
         PageView(
           controller: controller.indicator,
           onPageChanged: ((value) {
-            controller.page.value = value;
-            // print(controller.page.value);
+            controller.changePage(value);
           }),
           children: const [
             // start page onboarding
@@ -44,18 +43,23 @@ class OnboardingView extends GetView<OnboardingController> {
             // end
           ],
         ),
-        Container(
-          alignment: const Alignment(0.8, -0.85),
-          child: GestureDetector(
-            onTap: () {
-              controller.indicator.jumpToPage(3);
-            },
-            child: Text(
-              'Skip',
-              style: semibold.copyWith(
-                  fontSize: 16, color: Theme.of(context).colorScheme.primary),
-            ),
-          ),
+        Obx(
+          () => controller.page.value > 1
+              ? const SizedBox.shrink()
+              : Container(
+                  alignment: const Alignment(0.8, -0.85),
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.indicator.jumpToPage(3);
+                    },
+                    child: Text(
+                      'Skip',
+                      style: semibold.copyWith(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                ),
         ),
         Obx(() => Container(
               alignment: Alignment(0, controller.page.value == 2 ? 0.88 : 0.85),
@@ -63,8 +67,8 @@ class OnboardingView extends GetView<OnboardingController> {
                   ? SmoothPageIndicator(
                       controller: controller.indicator,
                       count: 3,
-                      effect: const ScrollingDotsEffect(
-                        activeDotColor: purple,
+                      effect: ScrollingDotsEffect(
+                        activeDotColor: Theme.of(context).colorScheme.primary,
                         spacing: 8.0,
                         radius: 4.0,
                         dotWidth: 8,
@@ -82,14 +86,14 @@ class OnboardingView extends GetView<OnboardingController> {
                         alignment: Alignment.center,
                         // padding: EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
-                          color: purple,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           'Getting Started',
                           style: semibold.copyWith(
                             fontSize: 18,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ),

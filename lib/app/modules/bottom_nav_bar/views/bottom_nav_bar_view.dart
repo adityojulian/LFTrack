@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ordinary/app/models/screen_params.dart';
 import 'package:ordinary/app/modules/detector_widget/views/detector_widget_view.dart';
 import 'package:ordinary/app/modules/history/views/history_view.dart';
+import 'package:ordinary/app/modules/settings/views/settings_view.dart';
 // import 'package:ordinary/app/modules/home/views/home_view.dart';
 // import 'package:ordinary/app/modules/placeholder/views/placeholder_view.dart';
 
@@ -21,7 +22,8 @@ class BottomNavBarView extends GetView<BottomNavBarController> {
           child: <Widget>[
             // HomeView(bottomPadding: bottomPadding),
             const DetectorWidget(),
-            HistoryView()
+            HistoryView(),
+            SettingsView()
           ][controller.currentIndex.value],
         ),
       ),
@@ -73,7 +75,14 @@ class BottomNavBarView extends GetView<BottomNavBarController> {
                 icon: const Icon(
                   Icons.history_outlined,
                 ),
-                label: "History")
+                label: "History"),
+            NavigationDestination(
+                selectedIcon: Icon(Icons.settings,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                icon: const Icon(
+                  Icons.settings_outlined,
+                ),
+                label: "Settings")
           ],
         ),
       ),

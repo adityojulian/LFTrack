@@ -35,6 +35,7 @@ class DateSelectionTabs extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   color: Theme.of(context).colorScheme.primary),
               child: TabBar(
+                controller: controller.tabController,
                 indicatorColor: Theme.of(context).colorScheme.onPrimary,
                 indicatorWeight: 5,
                 tabs: [
@@ -63,6 +64,7 @@ class DateSelectionTabs extends StatelessWidget {
               height: 40, // Adjust height to fit your design
               decoration: BoxDecoration(),
               child: TabBarView(
+                controller: controller.tabController,
                 children: [
                   exactDatePickerWidget(context),
                   dateRangePickerWidget(context),

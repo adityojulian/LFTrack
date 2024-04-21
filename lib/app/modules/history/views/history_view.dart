@@ -254,11 +254,13 @@ class HistoryView extends GetView<HistoryController> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: RawScrollbar(
+          controller: controller.mainScrollController,
           radius: Radius.circular(5),
           thumbVisibility: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: SingleChildScrollView(
+              controller: controller.mainScrollController,
               child: Column(
                 children: [
                   Padding(
@@ -330,7 +332,8 @@ class HistoryView extends GetView<HistoryController> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
+                    child: TextFormField(
+                      initialValue: controller.searchText,
                       onChanged: (text) => controller.updateSearchText(text),
                       decoration: InputDecoration(
                         label: Text(
@@ -379,10 +382,12 @@ class HistoryView extends GetView<HistoryController> {
                         ),
                         height: 300,
                         child: RawScrollbar(
+                          controller: controller.listScrollController,
                           // thumbColor: Theme.of(context).colorScheme.tertiary,
                           radius: Radius.circular(5),
                           thumbVisibility: true,
                           child: ListView.builder(
+                            controller: controller.listScrollController,
                             padding: const EdgeInsets.only(bottom: 8),
                             itemCount: controller.filteredLftResults.length,
                             itemBuilder: (context, index) {

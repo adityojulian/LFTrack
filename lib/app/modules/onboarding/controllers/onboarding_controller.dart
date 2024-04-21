@@ -7,6 +7,11 @@ class OnboardingController extends GetxController {
 
   RxInt page = 0.obs;
 
+  void changePage(value) {
+    page.value = value;
+    update();
+  }
+
   @override
   void dispose() {
     indicator.dispose();

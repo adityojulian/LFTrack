@@ -10,6 +10,8 @@ import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/placeholder/bindings/placeholder_binding.dart';
 import '../modules/placeholder/views/placeholder_view.dart';
+import '../modules/settings/bindings/settings_binding.dart';
+import '../modules/settings/views/settings_view.dart';
 import '../modules/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/splash_screen/views/splash_screen_view.dart';
 
@@ -23,7 +25,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.SPLASH_SCREEN;
 
   static final routes = [
     // GetPage(
@@ -32,15 +34,17 @@ class AppPages {
     //   binding: HomeBinding(),
     // ),
     GetPage(
-      name: _Paths.SPLASH_SCREEN,
-      page: () => const SplashScreenView(),
-      binding: SplashScreenBinding(),
-    ),
+        name: _Paths.SPLASH_SCREEN,
+        page: () => const SplashScreenView(),
+        binding: SplashScreenBinding(),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(seconds: 1)),
     GetPage(
-      name: _Paths.ONBOARDING,
-      page: () => const OnboardingView(),
-      binding: OnboardingBinding(),
-    ),
+        name: _Paths.ONBOARDING,
+        page: () => const OnboardingView(),
+        binding: OnboardingBinding(),
+        transition: Transition.rightToLeft,
+        transitionDuration: const Duration(milliseconds: 600)),
     // GetPage(
     //   name: _Paths.DETECTOR_WIDGET,
     //   page: () => const DetectorWidget(),
@@ -57,14 +61,21 @@ class AppPages {
       binding: PlaceholderBinding(),
     ),
     GetPage(
-      name: _Paths.BOTTOM_NAV_BAR,
-      page: () => const BottomNavBarView(),
-      binding: BottomNavBarBinding(),
-    ),
+        name: _Paths.BOTTOM_NAV_BAR,
+        page: () => const BottomNavBarView(),
+        binding: BottomNavBarBinding(),
+        transition: Transition.rightToLeft,
+        transitionDuration: const Duration(milliseconds: 600)),
     GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
+        name: _Paths.LOGIN,
+        page: () => const LoginView(),
+        binding: LoginBinding(),
+        transition: Transition.rightToLeft,
+        transitionDuration: const Duration(milliseconds: 600)),
+    GetPage(
+      name: _Paths.SETTINGS,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
     ),
   ];
 }

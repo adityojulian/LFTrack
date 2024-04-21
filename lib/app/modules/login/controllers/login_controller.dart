@@ -9,9 +9,16 @@ class LoginController extends GetxController {
   late Rx<User?> firebaseUser;
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  // late TextEditingController emailController;
+  // late TextEditingController passwordController;
+
   @override
   void onInit() {
     super.onInit();
+    // emailController = TextEditingController();
+    // passwordController = TextEditingController();
+    // emailController.text = "";
+    // passwordController.text = "";
   }
 
   @override
@@ -21,13 +28,20 @@ class LoginController extends GetxController {
     firebaseUser.bindStream(auth.userChanges());
 
     ever(firebaseUser, _setInitialScreen);
+
+    // emailController.text = "";
+    // passwordController.text = "";
   }
 
   _setInitialScreen(User? user) {
     if (user != null) {
-      Get.offAllNamed(Routes.BOTTOM_NAV_BAR);
+      Get.offAllNamed(
+        Routes.BOTTOM_NAV_BAR,
+      );
     } else {
-      Get.offAllNamed(Routes.ONBOARDING);
+      Future.delayed(const Duration(seconds: 2), (() {
+        Get.offAllNamed(Routes.ONBOARDING);
+      }));
     }
   }
 
@@ -39,7 +53,7 @@ class LoginController extends GetxController {
       // print(e.message);
       Get.snackbar(
         "Sign-up Failed",
-        "Failed to sign up: ${e.message.toString()}!",
+        "Failed to sign up: ${e.message.toString()}",
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
@@ -56,7 +70,7 @@ class LoginController extends GetxController {
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         "Login Failed",
-        "Failed to login: ${e.message.toString()}!",
+        "Failed to login: ${e.message.toString()}",
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
@@ -74,6 +88,10 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
+    // emailController.text = "";
+    // passwordController.text = "";
+    // emailController.dispose();
+    // passwordController.dispose();
     super.onClose();
   }
 }

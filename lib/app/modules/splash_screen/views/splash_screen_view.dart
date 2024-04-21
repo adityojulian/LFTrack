@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:ordinary/app/routes/app_pages.dart';
 
 import '../controllers/splash_screen_controller.dart';
 
@@ -9,26 +8,8 @@ class SplashScreenView extends GetView<SplashScreenController> {
   const SplashScreenView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 2), (() {
-      Get.offAllNamed(Routes.ONBOARDING);
-    }));
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      // appBar: AppBar(
-      //   actions: [
-      //     Switch(
-      //       // value: controller.currentTheme.value == ThemeMode.dark,
-      //       value: Get.isDarkMode,
-      //       onChanged: (value) {
-      //         // controller.switchTheme();
-      //         // Get.changeThemeMode(controller.currentTheme.value);
-      //         Get.changeThemeMode(
-      //           Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
-      //         );
-      //       },
-      //     ),
-      //   ],
-      // ),
       body: Stack(children: [
         Center(
           child: Container(

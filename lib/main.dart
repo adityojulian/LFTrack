@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorSchemeSeed: ColorSeed.baseColor.color,
           brightness: Brightness.dark),
-      themeMode: ThemeMode.light,
-      initialRoute: Routes.LOGIN,
+      themeMode: ThemeMode.system,
+      initialRoute: Routes.SPLASH_SCREEN,
       getPages: AppPages.routes,
     );
   }
