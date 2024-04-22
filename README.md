@@ -1,11 +1,6 @@
-<div style="text-align: center;">
-    <a href="https://adityojulian.github.io/lftrack/">
-        <img width="300" src="./assets/LFTrack_Logo_grd.png">
-    </a>
-    <p align="center" style="font-size: 26px; font-weight: bold;">LFTrack: Instant, Accurate, and Secure LFT Results at Your Fingertips</p>
-</div>
-<hr>
-<p align="center" style="font-size: 24px; font-weight: bold;">Also visit <a href="https://adityojulian.github.io/lftrack/">LFTrack microsite</a> for more info!</p>
+<p align="center"><img align="center" width="300" src="./assets/LFTrack_Logo_grd.png"></p>
+<h1 align="center">LFTrack: Instant, Accurate, and Secure LFT Results at Your Fingertips</h1>
+<h3 align="center">Also visit <a href="https://adityojulian.github.io/LFTrack/">LFTrack microsite</a> for more info!</h3>
 
 ## Project Description
 
