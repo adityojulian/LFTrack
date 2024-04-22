@@ -36,10 +36,10 @@ class SplashScreenView extends GetView<SplashScreenController> {
         ),
         Center(
           child: Container(
-            width: 100,
+            width: 200,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/icons/flutter.png"), scale: 0.2),
+                  image: AssetImage("assets/images/logo_transparent.png")),
             ),
           ),
         )

@@ -40,7 +40,7 @@ class AppPages {
         page: () => const SplashScreenView(),
         binding: SplashScreenBinding(),
         transition: Transition.fadeIn,
-        transitionDuration: const Duration(seconds: 1)),
+        transitionDuration: const Duration(microseconds: 600)),
     GetPage(
         name: _Paths.ONBOARDING,
         page: () => const OnboardingView(),
