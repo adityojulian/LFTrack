@@ -23,19 +23,19 @@ class OnboardingView extends GetView<OnboardingController> {
           children: const [
             // start page onboarding
             OnBoardingWidgets(
-              image: 'on_boarding_1.png',
+              image: 'onboard_1.jpg',
               title: 'Get LFT Ready',
               subtitle:
                   'Place Lateral Flow Test (LFT) on top of a flat surface',
             ),
             OnBoardingWidgets(
-              image: 'on_boarding_2.png',
+              image: 'onboard_2.gif',
               title: 'Adjust Phone\'s Position',
               subtitle:
                   'Frame the LFT to be in the middle of the camera preview by adjusting phone\'s position and angle',
             ),
             OnBoardingWidgets(
-              image: 'on_boarding_3.png',
+              image: 'onboard_3.gif',
               title: 'Let AI do the works!',
               subtitle:
                   'Wait for countdown to finish and the result will be automatically stored',
@@ -78,7 +78,7 @@ class OnboardingView extends GetView<OnboardingController> {
                     )
                   : GestureDetector(
                       onTap: () {
-                        Get.offAllNamed(Routes.LOGIN);
+                        Get.toNamed(Routes.LOGIN);
                       },
                       child: Container(
                         height: 55,

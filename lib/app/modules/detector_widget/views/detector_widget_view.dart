@@ -397,10 +397,10 @@ class _DetectorWidgetState extends State<DetectorWidget>
     // log("FRAME R:${frameRect.right.toString()}, B:${frameRect.bottom.toString()}");
 
     // Check if recognition is fully within the frame
-    return recognitionRect.left >= frameRect.left &&
-        recognitionRect.top >= frameRect.top &&
-        recognitionRect.right <= (frameRect.right + 10) &&
-        recognitionRect.bottom <= frameRect.bottom;
+    return recognitionRect.left >= (frameRect.left - 50) &&
+        recognitionRect.top >= (frameRect.top - 50) &&
+        recognitionRect.right <= (frameRect.right + 50) &&
+        recognitionRect.bottom <= (frameRect.bottom + 50);
     // return recLeft >= frameRect.left &&
     //     recTop >= frameRect.top &&
     //     recRight <= frameRect.right &&

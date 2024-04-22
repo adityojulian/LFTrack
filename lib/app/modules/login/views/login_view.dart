@@ -19,7 +19,7 @@ class LoginView extends GetView<LoginController> {
         title: Text(
           'Welcome',
           style: bold.copyWith(
-              fontSize: 70, color: Theme.of(context).colorScheme.onBackground),
+              fontSize: 60, color: Theme.of(context).colorScheme.onBackground),
         ),
         centerTitle: false,
       ),

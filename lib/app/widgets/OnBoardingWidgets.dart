@@ -1,3 +1,4 @@
+import 'package:device_frame/device_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ordinary/app/shared/theme.dart';
@@ -10,18 +11,40 @@ class OnBoardingWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double topPadding = MediaQuery.of(context).padding.top + 40;
+
     return Container(
       height: Get.height,
       child: Column(
         children: [
+          SizedBox(
+            height: topPadding,
+          ),
           Container(
-            height: Get.height * 0.65,
+            height: Get.height * 0.55,
+            // padding: EdgeInsets.all(8),
             // decoration: BoxDecoration(
             //   image: DecorationImage(
             //     image: AssetImage('assets/images/${image}'),
             //     scale: 1.75,
             //   ),
             // ),
+            child: Center(
+              child: Container(
+                child: DeviceFrame(
+                  device: Devices.android.samsungGalaxyA50,
+                  isFrameVisible: true,
+                  orientation: Orientation.portrait,
+                  screen: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/${image}'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
           Container(
             height: Get.height * 0.35,

@@ -78,6 +78,7 @@ class HistoryController extends GetxController
         .collection('users')
         .doc(auth.currentUser!.uid)
         .collection('lftResults')
+        .orderBy("createdOn", descending: true)
         .snapshots()
         .map((query) =>
             query.docs.map((item) => LFTResult.fromJson(item.data())).toList());
@@ -88,10 +89,11 @@ class HistoryController extends GetxController
     var filteredList = _lftResults.value;
     // Apply text search filter if search text is not empty
     if (_searchText.value.isNotEmpty) {
+      String searchTextLower = _searchText.value.toLowerCase();
       filteredList = filteredList.where((result) {
-        return result.lftResult
-            .toLowerCase()
-            .contains(_searchText.value.toLowerCase());
+        // Check if searchText is contained in lftResult or barcode
+        return result.lftResult.toLowerCase().contains(searchTextLower) ||
+            result.barcode.toLowerCase().contains(searchTextLower);
       }).toList();
     }
     // Apply date filter
