@@ -12,6 +12,7 @@ abstract class Routes {
   static const BOTTOM_NAV_BAR = _Paths.BOTTOM_NAV_BAR;
   static const LOGIN = _Paths.LOGIN;
   static const SETTINGS = _Paths.SETTINGS;
+  static const LFT_DETAILS = _Paths.LFT_DETAILS;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const BOTTOM_NAV_BAR = '/bottom-nav-bar';
   static const LOGIN = '/login';
   static const SETTINGS = '/settings';
+  static const LFT_DETAILS = '/lft-details';
 }

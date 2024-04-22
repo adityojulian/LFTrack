@@ -2,16 +2,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LFTResult {
-  final String barcode;
-  final String lftResult;
-  final String confidence;
-  final Timestamp createdOn;
+  String? documentId;
+  String? barcode;
+  String? lftResult;
+  String? confidence;
+  Timestamp? createdOn;
 
   LFTResult({
-    required this.barcode,
-    required this.lftResult,
-    required this.confidence,
-    required this.createdOn,
+    this.documentId,
+    this.barcode,
+    this.lftResult,
+    this.confidence,
+    this.createdOn,
   });
 
   Map<String, dynamic> toJson() => {
@@ -21,7 +23,9 @@ class LFTResult {
         'createdOn': createdOn,
       };
 
-  static LFTResult fromJson(Map<String, dynamic> json) => LFTResult(
+  static LFTResult fromJson(Map<String, dynamic> json, String docId) =>
+      LFTResult(
+        documentId: docId,
         barcode: json['barcode'],
         lftResult: json['lftResult'],
         confidence: json['confidence'],

@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ordinary/app/models/lft_result.dart';
 import 'package:ordinary/app/modules/history/views/date_selection_tabs.dart';
+import 'package:ordinary/app/modules/lft_details/controllers/lft_details_controller.dart';
+import 'package:ordinary/app/modules/lft_details/views/lft_details_view.dart';
 import 'package:ordinary/app/shared/theme.dart';
 
 import '../controllers/history_controller.dart';
@@ -38,83 +40,91 @@ class HistoryView extends GetView<HistoryController> {
 
   // Build the ListTile widget
   Widget buildLFTListTile(BuildContext context, LFTResult result) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_formatDateTime(result.createdOn.toDate()), style: bold),
-                const SizedBox(height: 4),
-                Text(result.barcode, style: regular),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(left: 20),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 8.0),
-              decoration: BoxDecoration(
-                color: _getResultColor(result.lftResult),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return GestureDetector(
+      onTap: () => Get.to(() => LftDetailsView(), binding: BindingsBuilder(() {
+        Get.put(LftDetailsController());
+        Get.find<LftDetailsController>().loadEditableCopy(result);
+        ;
+      })),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'C',
-                        style: bold.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ),
-                      Text(
-                        'T',
-                        style: bold.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: 10,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          result.lftResult == "invalid" ? "" : "-",
-                          style: bold.copyWith(
-                              color: _getResultColor(result.lftResult)),
-                        ),
-                        Text(
-                          result.lftResult == "positive" ? "-" : "",
-                          style: bold.copyWith(
-                              color: _getResultColor(result.lftResult)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    result.lftResult.toUpperCase(),
-                    style: bold.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary),
-                  ),
+                  Text(_formatDateTime(result.createdOn!.toDate()),
+                      style: bold),
+                  const SizedBox(height: 4),
+                  Text(result.barcode!, style: regular),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 8.0),
+                decoration: BoxDecoration(
+                  color: _getResultColor(result.lftResult!),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'C',
+                          style: bold.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary),
+                        ),
+                        Text(
+                          'T',
+                          style: bold.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: 10,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            result.lftResult == "invalid" ? "" : "-",
+                            style: bold.copyWith(
+                                color: _getResultColor(result.lftResult!)),
+                          ),
+                          Text(
+                            result.lftResult == "positive" ? "-" : "",
+                            style: bold.copyWith(
+                                color: _getResultColor(result.lftResult!)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      result.lftResult!.toUpperCase(),
+                      style: bold.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

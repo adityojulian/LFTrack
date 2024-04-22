@@ -80,8 +80,9 @@ class HistoryController extends GetxController
         .collection('lftResults')
         .orderBy("createdOn", descending: true)
         .snapshots()
-        .map((query) =>
-            query.docs.map((item) => LFTResult.fromJson(item.data())).toList());
+        .map((query) => query.docs
+            .map((item) => LFTResult.fromJson(item.data(), item.id))
+            .toList());
   }
 
   // Filtered list of results
@@ -92,20 +93,20 @@ class HistoryController extends GetxController
       String searchTextLower = _searchText.value.toLowerCase();
       filteredList = filteredList.where((result) {
         // Check if searchText is contained in lftResult or barcode
-        return result.lftResult.toLowerCase().contains(searchTextLower) ||
-            result.barcode.toLowerCase().contains(searchTextLower);
+        return result.lftResult!.toLowerCase().contains(searchTextLower) ||
+            result.barcode!.toLowerCase().contains(searchTextLower);
       }).toList();
     }
     // Apply date filter
     if (_selectedDate.value != null) {
       filteredList = filteredList.where((result) {
-        return isSameDay(result.createdOn.toDate(), _selectedDate.value!);
+        return isSameDay(result.createdOn!.toDate(), _selectedDate.value!);
       }).toList();
     }
     // Apply date range filter
     if (_selectedDateRange.value != null) {
       filteredList = filteredList.where((result) {
-        final date = result.createdOn.toDate();
+        final date = result.createdOn!.toDate();
         return date.isAfter(_selectedDateRange.value!.start) &&
             date.isBefore(_selectedDateRange.value!.end);
       }).toList();
@@ -254,7 +255,7 @@ class HistoryController extends GetxController
     // Add data rows
     for (LFTResult result in filteredLftResults) {
       List<dynamic> row = [];
-      row.add(result.createdOn.toDate().toString());
+      row.add(result.createdOn!.toDate().toString());
       row.add(result.barcode);
       row.add(result.lftResult);
       rows.add(row);
