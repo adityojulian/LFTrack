@@ -49,6 +49,35 @@ Here's a description of each screen:
 15. **History (All Scans)**: Displays all scan results with the option to "Export" the data. The scans are labeled with outcomes like "Positive," "Negative," or "Invalid."
 16. **Export Options**: A screen dedicated to exporting data, with filters for date range and result type, along with a toggle for including invalid results.
 
+## Core Technologies
+
+### Flutter
+- The application is developed using Flutter, which enables a cross-platform development approach from a single codebase.
+
+### TensorFlow Lite
+- TensorFlow Lite is used for running the machine learning model responsible for LFT predictions.
+
+### Google ML Kit
+- Barcode scanning features are powered by Google ML Kit, facilitating accurate and efficient barcode recognition.
+
+## User Interface
+
+### Material 3
+- The app's user interface is designed following Material 3 guidelines to ensure a modern and cohesive look-and-feel.
+
+## Backend Services
+
+### Firebase Authentication
+- User authentication processes are handled using Firebase Authentication, ensuring secure access control.
+
+### Firestore
+- Firestore is the chosen database solution for LFTrack, allowing for real-time data synchronization and storage.
+
+## State Management
+
+### GetX
+- The GetX library is employed for state management, providing a robust solution for managing the app's state reactively.
+
 ## Development Environment
 
 ```
