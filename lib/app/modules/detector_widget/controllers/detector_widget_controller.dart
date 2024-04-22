@@ -97,7 +97,9 @@ class DetectorWidgetController extends GetxController {
   void openDuplicateDialog() {
     Get.dialog(
       AlertDialog(
-        content: Text("This LFT has been scanned", style: medium),
+        content: Text(
+            "This LFT has been scanned before. Please try another one",
+            style: medium),
         actions: <Widget>[
           TextButton(
               onPressed: () {
@@ -112,7 +114,9 @@ class DetectorWidgetController extends GetxController {
   void noBarcodeDialog() {
     Get.dialog(
       AlertDialog(
-        content: Text("No Barcode", style: medium),
+        content: Text(
+            "LFT detected with no barcode. Please make sure the barcode is visible",
+            style: medium),
         actions: <Widget>[
           TextButton(
               onPressed: () {

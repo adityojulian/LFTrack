@@ -1,6 +1,11 @@
-# LFTrack
-
-> _:dash: Instant, Accurate, and Secure LFT Results at Your Fingertips_
+<div style="text-align: center;">
+    <a href="https://adityojulian.github.io/lftrack/">
+        <img width="300" src="./assets/LFTrack_Logo_grd.png">
+    </a>
+    <p align="center" style="font-size: 26px; font-weight: bold;">LFTrack: Instant, Accurate, and Secure LFT Results at Your Fingertips</p>
+</div>
+<hr>
+<p align="center" style="font-size: 24px; font-weight: bold;">Also visit <a href="https://adityojulian.github.io/lftrack/">LFTrack microsite</a> for more info!</p>
 
 ## Project Description
 
@@ -17,6 +22,54 @@ From the moment the LFT is positioned within the camera's frame, the app initiat
 **:fire: Direct Database Integration:** Automatically uploads results to a secure [Firebase](https://firebase.google.com/) database, ensuring data integrity and privacy.
 
 **:iphone: User-friendly Interface:** Designed for ease of use, requiring minimal interaction from the user to complete the scanning process.
+
+## Screens
+
+<table>
+  <tr>
+    <!-- Image 1 -->
+    <td>
+      <p align="center" style="font-size: 16px; font-weight: bold;">Instant scan with minimum interaction</p>
+      <img src="github_assets\gif\savetodb.gif" alt="Instant scan with minimum interaction" width="300">
+      <br>
+    </td>
+    <!-- Image 2 -->
+    <td>
+      <p align="center" style="font-size: 16px; font-weight: bold;">Notification dialog for scan errors</p>
+      <img src="github_assets\gif\duplicate.gif" alt="Notification dialog for scan errors" width="300">
+      <br>
+    </td>
+    <!-- Image 3 -->
+    <td>
+      <p align="center" style="font-size: 16px; font-weight: bold;">Search scanned LFT based on label and ID</p>
+      <img src="github_assets\gif\search.gif" alt="Search scanned LFT based on label and ID" width="300">
+      <br>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <!-- Image 1 -->
+    <td>
+      <p align="center" style="font-size: 16px; font-weight: bold;">Filter based on date or date range</p>
+      <img src="github_assets\gif\date.gif" alt="Instant scan with minimum interaction" width="300">
+      <br>
+    </td>
+    <!-- Image 2 -->
+    <td>
+      <p align="center" style="font-size: 16px; font-weight: bold;">Convert LFT results to CSV</p>
+      <img src="github_assets\gif\csv.gif" alt="Notification dialog for scan errors" width="300">
+      <br>
+    </td>
+    <!-- Image 3 -->
+    <td>
+      <p align="center" style="font-size: 16px; font-weight: bold;">Switch to Darkmode for better readability</p>
+      <img src="github_assets\gif\darkmode.gif" alt="Search scanned LFT based on label and ID" width="300">
+      <br>
+    </td>
+  </tr>
+</table>
 
 ## User Persona
 
@@ -51,41 +104,22 @@ Here's a description of each screen:
 
 ## Core Technologies
 
-### Flutter
-- The application is developed using Flutter, which enables a cross-platform development approach from a single codebase.
-
-### TensorFlow Lite
-- TensorFlow Lite is used for running the machine learning model responsible for LFT predictions.
-
-### Google ML Kit
-- Barcode scanning features are powered by Google ML Kit, facilitating accurate and efficient barcode recognition.
-
-## User Interface
-
-### Material 3
-- The app's user interface is designed following Material 3 guidelines to ensure a modern and cohesive look-and-feel.
-
-## Backend Services
-
-### Firebase Authentication
-- User authentication processes are handled using Firebase Authentication, ensuring secure access control.
-
-### Firestore
-- Firestore is the chosen database solution for LFTrack, allowing for real-time data synchronization and storage.
-
-## State Management
-
-### GetX
-- The GetX library is employed for state management, providing a robust solution for managing the app's state reactively.
+- **Flutter**: The application is developed using Flutter, which enables a cross-platform development approach from a single codebase.
+- **TensorFlow Lite**: TensorFlow Lite is used for running the machine learning model responsible for LFT predictions.
+- **Google ML Kit**: Barcode scanning features are powered by Google ML Kit, facilitating accurate and efficient barcode recognition.
+  **Material 3**: The app's user interface is designed following Material 3 guidelines to ensure a modern and cohesive look-and-feel.
+- **Firebase Authentication**: User authentication processes are handled using Firebase Authentication, ensuring secure access control.
+- **Firestore**: Firestore is the chosen database solution for LFTrack, allowing for real-time data synchronization and storage.
+- **GetX**: The GetX library is employed for state management, providing a robust solution for managing the app's state reactively.
 
 ## Development Environment
 
 ```
 $ flutter --version
-Flutter 3.16.9 • channel stable • https://github.com/flutter/flutter.git
-Framework • revision 41456452f2 (10 days ago) • 2024-01-25 10:06:23 -0800
-Engine • revision f40e976bed
-Tools • Dart 3.2.6 • DevTools 2.28.5
+Flutter 3.19.6 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 54e66469a9 (5 days ago) • 2024-04-17 13:08:03 -0700
+Engine • revision c4cd48e186
+Tools • Dart 3.3.4 • DevTools 2.31.1
 ```
 
 ### Android Emulator
@@ -96,20 +130,23 @@ Tools • Dart 3.2.6 • DevTools 2.28.5
 
 :white_check_mark: Harware Acceleration: **On**
 
-## Use this README File
+## Installation
 
-Use this section to show us what your Mobile App is about. Include a Screenshot to the App, link to the various frameworks you've used. Include your presentation video here that shows off your Mobile App. Emojis are also fun to include 📱 😄
+Pre-requirements:
 
-Look at some other Flutter Apps online and see how they use there README File. Good examples are:
+- Install Flutter and Dart
+- Install simulation device or
+- Have a phone plugged to the main machine
 
-- https://github.com/miickel/flutter_particle_clock
-- https://github.com/Tarikul711/flutter-food-delivery-app-ui
-- https://github.com/mohak1283/Instagram-Clone
-
-## Include A Section That Tells Developers How To Install The App
-
-Include a section that gives intructions on how to install the app or run it in Flutter. What versions of the plugins are you assuming? Maybe define a licence
+```
+$ git clone https://github.com/adityojulian/LFTrack.git
+$ cd LFTrack
+$ flutter pub get
+$ flutter run
+```
 
 ## Contact Details
 
-Having Contact Details is also good as it shows people how to get in contact with you if they'd like to contribute to the app. Testing SSH
+I'm happy to answer your questions and please feel free if you want to contribute to this project.
+
+- LinkedIn: https://www.linkedin.com/in/adityojulian/
