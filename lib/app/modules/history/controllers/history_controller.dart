@@ -151,15 +151,31 @@ class HistoryController extends GetxController
         date1.day == date2.day;
   }
 
+  // Future<bool> _requestStoragePermission() async {
+  //   if (Platform.isAndroid) {
+  //     if (await Permission.storage.request().isGranted &&
+  //         await Permission.manageExternalStorage.request().isGranted) {
+  //       return true;
+  //     } else {
+  //       var result = await Permission.storage.request();
+  //       var resultExt = await Permission.manageExternalStorage.request();
+  //       if (result == PermissionStatus.granted &&
+  //           resultExt == PermissionStatus.granted) {
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
+
   Future<bool> _requestStoragePermission() async {
-    if (Platform.isAndroid) {
-      if (await Permission.storage.request().isGranted) {
+    if (await Permission.manageExternalStorage.request().isGranted) {
+      return true;
+    } else {
+      // var result = await Permission.storage.request();
+      var resultExt = await Permission.manageExternalStorage.request();
+      if (resultExt == PermissionStatus.granted) {
         return true;
-      } else {
-        var result = await Permission.storage.request();
-        if (result == PermissionStatus.granted) {
-          return true;
-        }
       }
     }
     return false;
@@ -167,6 +183,29 @@ class HistoryController extends GetxController
 
   final DateFormat dateFormat = DateFormat('dd-MM-yyyy_hh-mm-ss');
   final DateFormat date = DateFormat('dd-MM-yyyy');
+
+  // Method to export data to a CSV file
+  void exportStatusDialog(String message) {
+    Get.dialog(
+      AlertDialog(
+        content: Text(message, style: medium),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: Text(
+              "Close",
+              style: regular,
+            ),
+          ),
+          (message == "Permission is denied")
+              ? TextButton(onPressed: () {}, child: Text("Open settings"))
+              : SizedBox.shrink(),
+        ],
+      ),
+    );
+  }
 
   // Method to export data to a CSV file
   Future<void> exportFilteredResultsToCsv() async {
@@ -282,8 +321,11 @@ class HistoryController extends GetxController
       await file.writeAsString(csv);
 
       log('CSV Exported: $filePath');
+
+      exportStatusDialog("The result is saved at ${filePath}");
     } else {
-      log('Permission Denied');
+      exportStatusDialog("Permission is denied");
+      ;
     }
     // }
   }

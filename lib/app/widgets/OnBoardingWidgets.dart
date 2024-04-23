@@ -47,7 +47,7 @@ class OnBoardingWidgets extends StatelessWidget {
             ),
           ),
           Container(
-            height: Get.height * 0.35,
+            height: Get.height * 0.3,
             width: Get.width,
             decoration: BoxDecoration(
               // borderRadius: BorderRadius.circular(25),
